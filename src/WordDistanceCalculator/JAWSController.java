@@ -1,5 +1,6 @@
 package WordDistanceCalculator;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -28,8 +29,14 @@ public class JAWSController {
 	}
 	private JAWSController()
 	{
+		//Wordnet directory
+		String wordnetPath = getWordnetDirectory();
+		
 		//JAWS open
-		System.setProperty("wordnet.database.dir", "D:\\WordNet\\3.0\\dict\\");
+		if(wordnetPath != null)
+		{
+			System.setProperty("wordnet.database.dir", wordnetPath);
+		}
 		database = WordNetDatabase.getFileInstance();
 		
 		//JWS open
@@ -221,6 +228,23 @@ public class JAWSController {
 		System.out.println(jc.getDistance("browse", "search"));
 		System.out.println(jc.getDistance("complete", "finish"));
 		
+	}
+	
+	public String getWordnetDirectory()
+	{
+		String path1 = "D:\\WordNet\\3.0\\dict\\";
+		String path2 = "D:\\Program Files (x86)\\WordNet\\3.0\\dict\\";
+		
+		File f1 = new File(path1);
+		File f2 = new File(path2);
+	    // 파일 존재 여부 판단
+	    if (f1.isDirectory()) {
+	      return path1;
+	    }
+	    else if(f2.isDirectory()) {
+	      return path2;
+	    }
+	    return null;
 	}
 
 }
