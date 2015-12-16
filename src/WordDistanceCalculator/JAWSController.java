@@ -217,9 +217,10 @@ public class JAWSController {
 			System.out.println(ss.getWordForms()[0]+":"+ss.getTagCount(ss.getWordForms()[getFreq(ss.getWordForms(),"enter")]));
 		}*/
 		
+
+		System.out.println(jc.getDistance("browse", "search"));
+		System.out.println(jc.getDistance("complete", "finish"));
 		
-		System.out.println(jc.getDistance("introduce", "prefare"));
-		System.out.println(jc.res.max("remove", "mark","v"));
 	}
 
 }

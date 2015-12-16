@@ -8,8 +8,10 @@ import java.util.HashSet;
 
 import javax.swing.plaf.synth.SynthSeparatorUI;
 
+import Entity.Sentence;
 import Entity.VerbCluster;
 import Entity.VerbFrequency;
+import MySQLDataAccess.VerbFrequencyAccessor;
 import ToolSettings.Thresholds;
 import WordDistanceCalculator.Distance;
 import WordDistanceCalculator.JAWSController;
@@ -160,8 +162,8 @@ public class ClusterCreatorController {
 		HashSet<Distance> verbDistSet= new HashSet<Distance>();
 		
 		verbDistSet = makeDistanceSet(verbSet);
-		
-		VerbDistanceList.makeDistanceList(verbDistSet);
+		VerbDistanceList list = new VerbDistanceList();
+		list.makeDistanceList(verbDistSet);
 		
 		/*System.out.println("==========USER");
 
@@ -216,32 +218,6 @@ public class ClusterCreatorController {
 		
 		return clusterMap;
 	}
-	
-/*	private static int getMinDistBasedOptimalClusters(ClusterInventory ci)
-	{
-		int i = 0;
-
-		while(true)
-		{
-			ArrayList<Cluster> levelCluster = ci.getItem(i);
-			if(levelCluster.size() == 0)
-				break;
-			
-			if(i > 0)
-			{
-				
-			}
-			
-			if(i > 1)
-			{
-				
-			}
-			
-			i++;
-		}
-		
-		return 0;
-	}*/
 	
 	private static int getOptimalClusterLevelByRSquare(ClusterInventory ci)
 	{
@@ -358,47 +334,142 @@ public class ClusterCreatorController {
 		return repCandidate;
 	}
 	
-	
-
-	public static HashMap<String, String> createDicBasedCluster(ArrayList<VerbCluster> base, HashSet<String> verbs) {
-
+	public static HashMap<String, String> createDicBasedCluster(ArrayList<VerbCluster> base, HashSet<String> verbs, HashMap<String, Double> freqMap) {
+		//1. Remove cluster that not occur in verbs
+		ArrayList<VerbCluster> notOccured = new ArrayList<VerbCluster>(); 
+		for(VerbCluster vc :base)
+		{
+			boolean occured = false;
+			for(String v : verbs)
+			{
+				if(vc.getVerbList().contains(v)){
+					occured = true;
+					break;
+				}
+			}
+			if(!occured)
+			{
+				System.out.println("Not occured "+ vc.getRepresentives());
+				notOccured.add(vc);
+			}
+		}
+		base.removeAll(notOccured);
+		
+		//2.Synonym and similar verbs are added in the Dic.
+		ArrayList<String> clusteredVerbs = new ArrayList<String>(); 
 		for(String v : verbs)
 		{
 			//pass if the verb is in dic
-			if(isInDictionary(base,v))
+			if(isInDictionary(base,v)){
+				//System.out.println(v+" is in Dic.");
+				clusteredVerbs.add(v);
 				continue;
-			
+			}
+
+			//System.out.println("Considering : "+v);
 			for(VerbCluster vc :base)
 			{
 				for(String dicItem : vc.getVerbList())
 				{
-					if(v.equals(dicItem))
-						break;
-					else if(JAWSController.getController().isSynonym(v, dicItem,0.2)){
+					//SYNONYM
+					if(JAWSController.getController().isSynonym(v, dicItem,0.2)){
+						System.out.println(dicItem+":"+v+" are synonym");
+						clusteredVerbs.add(v);
 						vc.addVerb(v);
+						break;
+					}
+					//DISTANCE
+					double dist = JAWSController.getController().getDistance(v, dicItem);
+					if( dist < Thresholds.Word_Max_Distance)
+					{
+						clusteredVerbs.add(v);
+						vc.addVerb(v);
+						System.out.println(dicItem+":"+v+" are similar ("+dist+")");
+						break;
 					}
 				}
 			}
 			
 		}
-			
 		
-		/*for(VerbCluster vc :base)
+		//remove clustered verbs
+		for(String cedv : clusteredVerbs)
 		{
-			for(String v : verbs)
+			verbs.remove(cedv);
+		}
+		
+		//System.out.println(verbs);
+		//3. Create new cluster if the distance is in threshold. 
+		HashSet<Distance> verbDistSet= new HashSet<Distance>();
+		verbDistSet = makeDistanceSet(verbs);
+		for(Distance d : verbDistSet)
+		{
+			if(d.distance < Thresholds.Word_Max_Distance){
+				//TODO not occured case
+			}
+		}
+
+		ArrayList<String> highFreqVerbs = new ArrayList<String>();
+		for(String v : verbs)
+		{
+			if(freqMap.get(v) > Thresholds.Verb_Occurence_Threshold){
+				System.out.println(v+" is high");
+				highFreqVerbs.add(v);
+			}
+			
+		}
+		/*for(String key : freqMap.keySet())
+		{
+			//System.out.println(vq.getVerb()+":"+vq.getFrequency());
+			if(freqMap.get(key) > Thresholds.Verb_Occurence_Threshold && !(verbs.contains(key)) && !(isInDictionary(base,key)))
 			{
-				for(String dicItem : vc.getVerbList())
-				{
-					if(v.equals(dicItem))
-						break;
-					else if(JAWSController.getController().isSynonym(v, dicItem)){
-						System.out.println(v+":"+dicItem);
-					}
-				}
+				System.out.println(key+" is high"+verbs.contains(key));
+				highFreqVerbs.add(key);
+			}
+			else
+			{
+				//System.out.println(key+" is low");
 			}
 		}*/
 		
+		HashSet<Distance> frequentVerbDistSet= new HashSet<Distance>();
+		frequentVerbDistSet = makeDistanceSet(verbs);
+		
+		VerbDistanceList.makeDistanceList(frequentVerbDistSet);
+		VerbClusterCreator creator = new VerbClusterCreator();
+		ClusterInventory ci = creator.makeWardsHierarchicalCluster();
+		//ci.print();
+		
+		
 		return null;
+	}
+
+	private static ArrayList<VerbFrequency> makeVerbFrequency(HashSet<String> verbs) {
+		int totalCount = verbs.size();
+		
+		ArrayList<VerbFrequency> freqMap = new ArrayList<VerbFrequency>();
+		
+		for(String s : verbs)
+		{
+			VerbFrequency vf;
+			vf = new VerbFrequency(s, totalCount);
+			
+			if(freqMap.contains(vf))
+			{
+				for(VerbFrequency f : freqMap)
+				{
+					if(f.equals(vf))
+						f.addCount();
+				}
+			}
+			else
+			{
+				freqMap.add(vf);
+			}
+		}
+		//VerbFrequencyAccessor vfa = new VerbFrequencyAccessor();
+		//vfa.createFrequencyTable(freqMap);
+		return freqMap;
 	}
 
 	private static boolean isInDictionary(ArrayList<VerbCluster> base, String v) {

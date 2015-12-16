@@ -16,6 +16,15 @@ public class VerbFrequency {
 		this.frequency = (double) 1/total;
 	}
 	
+	public VerbFrequency(String verb, int total)
+	{
+		super();
+		this.verb = verb;
+		this.count = 1;
+		this.total = total;
+		this.frequency = (double) 1/total;
+	}
+	
 	
 	
 	public VerbFrequency(String verb, String type, int count, int total,

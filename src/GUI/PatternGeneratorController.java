@@ -369,11 +369,23 @@ public class PatternGeneratorController {
 		}
 		
 		//Create clusters
+		ArrayList<VerbFrequency> freqs = makeVerbFrequency(sentenceList);
+		
+		HashMap<String,Double> userFreqMap = new HashMap<String,Double>();
+		HashMap<String,Double> systemFreqMap = new HashMap<String,Double>();
+		for(VerbFrequency f : freqs)
+		{
+			if(f.getType().equals("u"))
+				userFreqMap.put(f.getVerb(), f.getFrequency());
+			else if(f.getType().equals("s"))
+				systemFreqMap.put(f.getVerb(), f.getFrequency());
+		}
+		
 		DictionaryAccessor da = new DictionaryAccessor();
 		System.out.println("--- User Clustering ---");
-		HashMap<String,String> userVerbClusterMap = ClusterCreatorController.createDicBasedCluster(da.getUserDictionary(),userVerb);
+		HashMap<String,String> userVerbClusterMap = ClusterCreatorController.createDicBasedCluster(da.getUserDictionary(),userVerb,userFreqMap);
 		System.out.println("--- System Clustering ---");
-		HashMap<String,String> systemVerbClusterMap = ClusterCreatorController.createDicBasedCluster(da.getSystemDictionary(),systemVerb);
+		HashMap<String,String> systemVerbClusterMap = ClusterCreatorController.createDicBasedCluster(da.getSystemDictionary(),systemVerb,systemFreqMap);
 	}
 	
 	private void makeDistancedBasedCluster()
