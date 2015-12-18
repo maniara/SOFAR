@@ -334,7 +334,7 @@ public class ClusterCreatorController {
 		return repCandidate;
 	}
 	
-	public static HashMap<String, String> createDicBasedCluster(ArrayList<VerbCluster> base, HashSet<String> verbs, HashMap<String, Double> freqMap) {
+	public static HashMap<String, String> createDicBasedCluster(ArrayList<VerbCluster> base, HashSet<String> verbs, HashMap<String, Double> freqMap, String subjectType) {
 		//1. Remove cluster that not occur in verbs
 		ArrayList<VerbCluster> notOccured = new ArrayList<VerbCluster>(); 
 		for(VerbCluster vc :base)
@@ -404,20 +404,42 @@ public class ClusterCreatorController {
 		verbDistSet = makeDistanceSet(verbs);
 		for(Distance d : verbDistSet)
 		{
+			//If the verb has high frequency and can be a one cluster
 			if(d.distance < Thresholds.Word_Max_Distance){
-				//TODO not occured case
+				System.out.println("Find similar verb pair:"+d.toString());
+				//not occured this time.
 			}
 		}
 
 		ArrayList<String> highFreqVerbs = new ArrayList<String>();
+		ArrayList<String> lowFreqVerbs = new ArrayList<String>();
+		
 		for(String v : verbs)
 		{
 			if(freqMap.get(v) > Thresholds.Verb_Occurence_Threshold){
-				System.out.println(v+" is high");
+				//System.out.println(v+" is high");
 				highFreqVerbs.add(v);
+			}
+			else{
+				//System.out.println(v+" is low");
+				lowFreqVerbs.add(v);
 			}
 			
 		}
+		
+		//High frequency is be a cluster
+		for(String hv : highFreqVerbs)
+		{
+			VerbCluster c = new VerbCluster(hv, hv, "0", subjectType);
+			base.add(c);
+		}
+		
+		//Low one has to find similar cluster(
+		for(String lv : lowFreqVerbs){
+			//System.out.print(lv+"-->");
+			getSimilarVerbByMax(base,lv).addVerb(lv);
+		}
+		
 		/*for(String key : freqMap.keySet())
 		{
 			//System.out.println(vq.getVerb()+":"+vq.getFrequency());
@@ -432,17 +454,67 @@ public class ClusterCreatorController {
 			}
 		}*/
 		
-		HashSet<Distance> frequentVerbDistSet= new HashSet<Distance>();
-		frequentVerbDistSet = makeDistanceSet(verbs);
+		HashMap<String,String> clusterMap = new HashMap<String,String>();
+		for(VerbCluster c:base)
+		{
+			clusterMap.put(c.getRepresentives(),c.getVerbs());
+		}
 		
-		VerbDistanceList.makeDistanceList(frequentVerbDistSet);
-		VerbClusterCreator creator = new VerbClusterCreator();
-		ClusterInventory ci = creator.makeWardsHierarchicalCluster();
-		//ci.print();
-		
-		
-		return null;
+		return clusterMap;
 	}
+	
+	private static VerbCluster getSimilarVerbByAverage(ArrayList<VerbCluster> cluster, String verb){
+		double closestDist = Double.MAX_VALUE;
+		VerbCluster closestCluster = null;
+		
+		JAWSController con = JAWSController.getController();
+		
+		for(VerbCluster c:cluster)
+		{
+			double totalDist = 0.0;
+			for(String cv : c.getVerbList())
+			{
+				totalDist = totalDist + con.getDistance(cv, verb);
+			}
+			double avrDist = totalDist/c.getVerbList().size();
+			
+			if(closestDist>avrDist)
+			{
+				closestDist = avrDist;
+				closestCluster = c;
+			}
+		}
+		
+		return closestCluster;
+	}
+	
+	private static VerbCluster getSimilarVerbByMax(ArrayList<VerbCluster> cluster, String verb){
+		double closestDist = Double.MAX_VALUE;
+		VerbCluster closestCluster = null;
+		
+		JAWSController con = JAWSController.getController();
+		
+		for(VerbCluster c:cluster)
+		{
+			double minDist = Double.MAX_VALUE;
+			for(String cv : c.getVerbList())
+			{
+				double dis = con.getDistance(cv, verb);
+				if(minDist>dis){
+					minDist = dis;
+				}
+			}
+			
+			if(closestDist>minDist)
+			{
+				closestDist = minDist;
+				closestCluster = c;
+			}
+		}
+		
+		return closestCluster;
+	}
+	
 
 	private static ArrayList<VerbFrequency> makeVerbFrequency(HashSet<String> verbs) {
 		int totalCount = verbs.size();

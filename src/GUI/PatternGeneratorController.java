@@ -383,9 +383,9 @@ public class PatternGeneratorController {
 		
 		DictionaryAccessor da = new DictionaryAccessor();
 		System.out.println("--- User Clustering ---");
-		HashMap<String,String> userVerbClusterMap = ClusterCreatorController.createDicBasedCluster(da.getUserDictionary(),userVerb,userFreqMap);
+		HashMap<String,String> userVerbClusterMap = ClusterCreatorController.createDicBasedCluster(da.getUserDictionary(),userVerb,userFreqMap,"u");
 		System.out.println("--- System Clustering ---");
-		HashMap<String,String> systemVerbClusterMap = ClusterCreatorController.createDicBasedCluster(da.getSystemDictionary(),systemVerb,systemFreqMap);
+		HashMap<String,String> systemVerbClusterMap = ClusterCreatorController.createDicBasedCluster(da.getSystemDictionary(),systemVerb,systemFreqMap,"s");
 	}
 	
 	private void makeDistancedBasedCluster()
