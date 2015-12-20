@@ -31,17 +31,18 @@ public class JAWSController {
 	{
 		//Wordnet directory
 		String wordnetPath = getWordnetDirectory();
+		String propPath = wordnetPath  + "//3.0//dict";
 		
 		//JAWS open
 		if(wordnetPath != null)
 		{
-			System.setProperty("wordnet.database.dir", wordnetPath);
+			System.setProperty("wordnet.database.dir", propPath);
 		}
 		database = WordNetDatabase.getFileInstance();
 		
 		//JWS open
-		String WNDir = "D:\\WordNet";
-		JWS ws = new JWS(WNDir,"3.0");
+		//String WNDir = "D:\\WordNet";
+		JWS ws = new JWS(wordnetPath,"3.0");
 		res = ws.getResnik();
 	}
 	
@@ -232,8 +233,8 @@ public class JAWSController {
 	
 	public String getWordnetDirectory()
 	{
-		String path1 = "D:\\WordNet\\3.0\\dict\\";
-		String path2 = "D:\\Program Files (x86)\\WordNet\\3.0\\dict\\";
+		String path1 = "D:\\WordNet";
+		String path2 = "C:\\Program Files (x86)\\WordNet";
 		
 		File f1 = new File(path1);
 		File f2 = new File(path2);

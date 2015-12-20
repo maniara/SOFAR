@@ -28,6 +28,7 @@ import Recommender.MainVerbExtractor;
 import ToolSettings.Thresholds;
 import VerbClusterGenerater.BaseFormExtractor;
 import VerbClusterGenerater.ClusterCreatorController;
+import VerbClusterGenerater.Generator;
 import VerbClusterGenerater.VerbClusterInstance;
 import PatternGenerator.PatternTreeViewer;
 
@@ -251,7 +252,7 @@ public class PatternGeneratorController {
 	}
 	
 	
-	private void makeSynonymBasedCluster()
+	/*private void makeSynonymBasedCluster()
 	{
 		HashSet<String> userVerb = new HashSet<String>();
 		HashSet<String> systemVerb = new HashSet<String>();
@@ -305,103 +306,14 @@ public class PatternGeneratorController {
 			String verbs = systemVerbClusterMap.get(key);
 			vca.addCluster(key, verbs, "s");
 		}
-	}
+	}*/
 	
-	
-	private ArrayList<VerbFrequency> makeVerbFrequency(ArrayList<Sentence> sentenceList) {
-		int userTotalCount = 0;
-		int systemTotalCount = 0;
-		
-		for(Sentence s : sentenceList)
-		{
-			if(s.getSentenceType()== 'u')
-				userTotalCount++;
-			if(s.getSentenceType()== 's')
-				systemTotalCount++;
-		}
-		
-		ArrayList<VerbFrequency> freqMap = new ArrayList<VerbFrequency>();
-		
-		for(Sentence s : sentenceList)
-		{
-			VerbFrequency vf;
-			if(s.getSentenceType() == 'u')
-				vf = new VerbFrequency(s.getVerb() , s.getSentenceType()+"", userTotalCount);
-			else
-				vf = new VerbFrequency(s.getVerb() , s.getSentenceType()+"", systemTotalCount);
-			
-			if(freqMap.contains(vf))
-			{
-				for(VerbFrequency f : freqMap)
-				{
-					if(f.equals(vf))
-						f.addCount();
-				}
-			}
-			else
-			{
-				freqMap.add(vf);
-			}
-		}
-		VerbFrequencyAccessor vfa = new VerbFrequencyAccessor();
-		vfa.createFrequencyTable(freqMap);
-		return freqMap;
-	}
-
-	private void makeDicBasedCluster()
+	public void makeDicBasedCluster()
 	{
-		HashSet<String> userVerb = new HashSet<String>();
-		HashSet<String> systemVerb = new HashSet<String>();
-		
-		SentenceAccessor sa = new SentenceAccessor();
-		ArrayList<Sentence> sentenceList = sa.getAllTrainingSentenceList();
-
-		for(Sentence s : sentenceList)
-		{			
-			if(s.getVerb() == null || s.getVerb().equals(""))
-				continue;
-			
-			if(s.getSentenceType() == 'u')
-				userVerb.add(s.getVerb());
-			else if
-			(s.getSentenceType() == 's')
-				systemVerb.add(s.getVerb());
-		}
-		
-		//Create clusters
-		ArrayList<VerbFrequency> freqs = makeVerbFrequency(sentenceList);
-		
-		HashMap<String,Double> userFreqMap = new HashMap<String,Double>();
-		HashMap<String,Double> systemFreqMap = new HashMap<String,Double>();
-		for(VerbFrequency f : freqs)
-		{
-			if(f.getType().equals("u"))
-				userFreqMap.put(f.getVerb(), f.getFrequency());
-			else if(f.getType().equals("s"))
-				systemFreqMap.put(f.getVerb(), f.getFrequency());
-		}
-		
-		DictionaryAccessor da = new DictionaryAccessor();
-		System.out.println("--- User Clustering ---");
-		HashMap<String,String> userVerbClusterMap = ClusterCreatorController.createDicBasedCluster(da.getUserDictionary(),userVerb,userFreqMap,"u");
-		System.out.println("--- System Clustering ---");
-		HashMap<String,String> systemVerbClusterMap = ClusterCreatorController.createDicBasedCluster(da.getSystemDictionary(),systemVerb,systemFreqMap,"s");
-		
-		VerbClusterAccessor vca = new VerbClusterAccessor();
-		for(String key:userVerbClusterMap.keySet())
-		{
-			String verbs = userVerbClusterMap.get(key);
-			vca.addCluster(key, verbs, "u");
-		}
-		
-		for(String key:systemVerbClusterMap.keySet())
-		{
-			String verbs = systemVerbClusterMap.get(key);
-			vca.addCluster(key, verbs, "s");
-		}
+		new Generator().makeVerbCluster();
 	}
 	
-	private void makeDistancedBasedCluster()
+	/*private void makeDistancedBasedCluster()
 	{
 		
 		HashSet<String> userVerb = new HashSet<String>();
@@ -460,7 +372,7 @@ public class PatternGeneratorController {
 		}
 
 		
-	}
+	}*/
 
 	private void setMainVerbOfTrainingSentence() {
 		MainVerbExtractor ext = new MainVerbExtractor();

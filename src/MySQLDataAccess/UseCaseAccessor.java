@@ -152,6 +152,7 @@ public class UseCaseAccessor {
 			}
 		}
 		catch(Exception ex) {ex.printStackTrace();}
+		//System.out.println(UCList.size());
 		
 		return UCList;
 	}

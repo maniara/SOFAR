@@ -13,6 +13,7 @@ import org.eclipse.swt.widgets.Shell;
 //import GUI.PatternList;
 import GUI.ProjectList;
 import GUI.ProjectMaker;
+import GUI.ValidateController;
 import GUI.PatternGeneratorController;
 
 public class Sofar {
@@ -106,6 +107,22 @@ public class Sofar {
 			public void widgetSelected(SelectionEvent arg0) 
 			{
 				new PatternGeneratorController();
+
+			}
+		});
+		
+		MenuItem ValidationMenuitem = new MenuItem(menu,SWT.CASCADE);
+		ValidationMenuitem.setText("Validate the result");
+
+		ValidationMenuitem.addSelectionListener(new SelectionListener()
+		{
+			@Override
+			public void widgetDefaultSelected(SelectionEvent arg0) {}
+
+			@Override
+			public void widgetSelected(SelectionEvent arg0) 
+			{
+				new ValidateController();
 
 			}
 		});

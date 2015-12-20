@@ -23,7 +23,15 @@ public class ActionFlowGraphGenerator {
 	public ActionFlowGraphGenerator()
 	{
 		useCaseList = new UseCaseAccessor().getAllTrainingUseCaseList();
+		//System.out.println(useCaseList.size());
 		clusterList = new VerbClusterAccessor().getAllClusters();
+	}
+	
+	public ActionFlowGraphGenerator(ArrayList<VerbCluster> clusters)
+	{
+		useCaseList = new UseCaseAccessor().getAllTrainingUseCaseList();
+		//System.out.println(useCaseList.size());
+		clusterList = clusters;
 	}
 	
 	public void makeActionFlowGraph()
@@ -106,6 +114,7 @@ public class ActionFlowGraphGenerator {
 		}
 			
 		//GraphViewer.draw(this.graph);
+		printGraph();
 		
 		System.out.println("Graph Generated");
 	}
@@ -176,6 +185,8 @@ public class ActionFlowGraphGenerator {
 			for(Sentence s : uc.getBasicFlowSentences())
 			{
 				//System.out.println(s.getSentenceContents());
+				if(s.getVerb() == null)
+					System.out.println("No main verb in "+ s.getSentenceContents());
 				s.setRepresentVerb(getRepresentiveVerb(s.getSentenceType()+"",s.getVerb()));
 			}
 		}
@@ -186,6 +197,7 @@ public class ActionFlowGraphGenerator {
 		//System.out.println(type+":"+verb);
 		for(VerbCluster vc : clusterList)
 		{
+
 			if(vc.getSubjectType().equals(type) && vc.getVerbs().contains(verb))
 			{
 				for(String vs : vc.getVerbs().split(";"))

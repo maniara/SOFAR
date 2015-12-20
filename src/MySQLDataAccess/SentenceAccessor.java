@@ -401,4 +401,32 @@ public class SentenceAccessor {
 			return false;
 		
 	}
+
+	public ArrayList<Sentence> getTrainingSentenceListForValidation(String targetProjectId) {
+		ArrayList<Sentence> SList = new ArrayList<Sentence>();
+		Statement stmt = null;
+		ResultSet rs = null;
+		String query = String.format("SELECT * FROM "+DataAccessString.dbName+".training_basicflow_sentence where projectid != "+targetProjectId);
+		try{
+			stmt = conn.createStatement();
+			rs = stmt.executeQuery(query);
+		}
+		catch(SQLException ex)
+		{
+			System.out.println("Query Execution Error");
+		}
+
+		try{
+			while(rs.next())
+			{
+				//String projectID, String usecaseID, String flowID, String sentenceOrder, String sentenceContents, char sentenceType
+				Sentence sen = new Sentence(rs.getString("sentenceNum"),rs.getString("projectID"),rs.getString("usecaseID"),rs.getString("flowID"),rs.getString("sentenceOrder"), rs.getString("sentenceContents"), rs.getString("sentenceType").toCharArray()[0], rs.getInt("sentenceSeq"), getBoolean(rs.getString("isRepeatable")),getBoolean(rs.getString("isOptional")));
+				sen.setVerb(rs.getString("mainVerb"));
+				SList.add(sen);
+			}
+		}
+		catch(Exception ex) {ex.printStackTrace();}
+		
+		return SList;
+	}
 }
