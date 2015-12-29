@@ -30,11 +30,14 @@ public class GeneratorController {
 		this.graph = graph;
 	}
 	
-	public PatternFragmentSet makePatterns()
+	public PatternFragmentSet makePatterns(boolean forValidate, String projectId)
 	{
 		//HashSet<String> repVerbSet = new HashSet<String>(); 
 		FlowAccessor fa = new FlowAccessor();
-		flowList = fa.getAllBasicFlowList();
+		if(forValidate)
+			flowList = fa.getAllBasicFlowListForValidate(projectId);
+		else
+			flowList = fa.getAllBasicFlowList();
 		verbCount = new HashMap<String, Integer>();
 		
 		VerbClusterAccessor vca = new VerbClusterAccessor();
@@ -84,13 +87,13 @@ public class GeneratorController {
 		filteringByGraph();
 		filteringBySize();
 		//printPFSet();
-		System.out.println("-----------------------------------");
+		//System.out.println("-----------------------------------");
 		//filteringByCount();
 		//filteringByWeight();
 		filteringDuplicated();
 		calculateWeight();
 		setRepVerbOfPattern();
-		printPFSet();
+		//printPFSet();
 
 		
 		/*for(PatternFragment pf : pfSet)

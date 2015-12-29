@@ -349,7 +349,7 @@ public class ClusterCreatorController {
 			}
 			if(!occured)
 			{
-				System.out.println("Not occured "+ vc.getRepresentives());
+				//System.out.println("Not occured "+ vc.getRepresentives());
 				notOccured.add(vc);
 			}
 		}
@@ -398,7 +398,15 @@ public class ClusterCreatorController {
 			verbs.remove(cedv);
 		}
 		
-		//System.out.println(verbs);
+		//Print log
+		if(subjectType.equals("u"))
+		{
+			System.out.println("=== User verb Clustering ===");
+		}
+		if(subjectType.equals("s"))
+		{
+			System.out.println("=== System verb Clustering ===");
+		}
 		//3. Create new cluster if the distance is in threshold. 
 		HashSet<Distance> verbDistSet= new HashSet<Distance>();
 		verbDistSet = makeDistanceSet(verbs);

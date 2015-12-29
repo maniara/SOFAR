@@ -321,8 +321,8 @@ public class UseCaseEditor {
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {
 				//new PatternAccessor().addPatternList(patternSet);
-				
-				ArrayList<MissedAction> missedActionMap = ActionFinderController.findMissedAction(usecase.getBasicFlowSentences());
+				ActionFinderController afc  = new ActionFinderController();
+				ArrayList<MissedAction> missedActionMap = afc.findMissedAction(usecase.getBasicFlowSentences(),false);
 				Collections.sort(missedActionMap);
 				MessageBox box = new MessageBox(shell, SWT.ICON_WARNING | SWT.OK);
 				String msg = "";

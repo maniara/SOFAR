@@ -134,6 +134,38 @@ public class FlowAccessor
 		return FList;
 	}
 	
+	public ArrayList<Flow> getAllBasicFlowListForValidate(String projectId)
+	{
+		ArrayList<Flow> FList = new ArrayList<Flow>();
+		
+		Statement stmt = null;
+		ResultSet rs = null;
+		String query = String.format("SELECT * FROM "+DataAccessString.dbName+".flow Where isAlternative = 'N' and projectId != '"+projectId+"'");
+		//System.out.println(query);
+		
+		try{
+			stmt = conn.createStatement();
+			rs = stmt.executeQuery(query);
+		}
+		catch(SQLException ex)
+		{
+			System.out.println("Query Execution Error");
+		}
+
+		try{
+			while(rs.next())
+			{
+				Flow flow = null;
+				flow = getFlowObject(rs);
+				
+				FList.add(flow);
+			}
+		}
+		catch(Exception ex) {}
+		//System.out.println(FList.size());
+		return FList;
+	}
+	
 	private Flow getFlowObject(ResultSet rs)
 	{
 		Flow flow = null;

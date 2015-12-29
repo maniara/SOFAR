@@ -2,16 +2,26 @@ package MissedActionFinder;
 
 public class MissedAction implements Comparable {
 	private int prevSequence;
+	private String prevSequenceString;
 	private int actionSequence;
 	private String subject;
 	private String verb;
-	public MissedAction(int pervSequence, int actionSequence, String subject, String verb) {
+	
+	public MissedAction(int pervSequence, String prevSequenceString,int actionSequence, String subject, String verb) {
 		super();
 		this.prevSequence = pervSequence;
+		this.prevSequenceString = prevSequenceString;
 		this.actionSequence = actionSequence;
 		this.subject = subject;
 		this.verb = verb;
 	}
+	
+	
+	public String getPrevSequenceString() {
+		return prevSequenceString;
+	}
+
+
 	public int getPrevSequence() {
 		return prevSequence;
 	}
@@ -23,6 +33,11 @@ public class MissedAction implements Comparable {
 	}
 	public String getVerb() {
 		return verb;
+	}
+	
+	public String getActionString()
+	{
+		return this.subject.substring(0, 1)+":"+this.verb;
 	}
 	@Override
 	public int compareTo(Object arg0) {
@@ -36,7 +51,7 @@ public class MissedAction implements Comparable {
 	@Override
 	public String toString()
 	{
-		return "'"+subject+" "+verb+"'("+(actionSequence)+") is missed after "+(prevSequence)+"";
+		return "'"+subject+" "+verb+"'("+(actionSequence)+") is missed after "+(prevSequence+":"+prevSequenceString)+"";
 	}
 	
 	

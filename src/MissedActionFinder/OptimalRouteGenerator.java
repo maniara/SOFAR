@@ -77,6 +77,12 @@ public class OptimalRouteGenerator
 			optIs.add(is);
 		}
 		
+//		//print matched patterns
+//		for(PatternPathRoad ois:optIs)
+//		{
+//			System.out.println(ois);
+//		}
+//		
 		return optIs;
 	}
 

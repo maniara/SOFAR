@@ -10,30 +10,61 @@ import MySQLDataAccess.PatternAccessor;
 import MySQLDataAccess.VerbClusterAccessor;
 import PatternGenerator.PatternFragment;
 import PatternGenerator.PatternFragmentSet;
+import PatternGenerator.PatternSetInstance;
 import ToolSettings.Thresholds;
 import VerbClusterGenerater.VerbClusterInstance;
 import WordDistanceCalculator.JAWSController;
 
 public class ActionFinderController {
 	
-	public static ArrayList<MissedAction> findMissedAction(ArrayList<Sentence> sentenceList)
+	private PatternFragmentSet patternSet;
+	private HashMap<String, String> userCluster;
+	private HashMap<String, String> systemCluster;
+	
+	public ActionFinderController(){
+		super();
+	}
+	
+	public ActionFinderController(PatternFragmentSet patternSet, ArrayList<VerbCluster> clusterList)
+	{
+		this.patternSet = patternSet;
+		userCluster = new HashMap<String, String>();
+		systemCluster = new HashMap<String, String>();
+		for(VerbCluster vc : clusterList)
+		{
+			if(vc.getSubjectType().equals("u"))
+			{
+				userCluster.put(vc.getRepresentives(), vc.getVerbs());
+			}
+			if(vc.getSubjectType().equals("s"))
+			{
+				systemCluster.put(vc.getRepresentives(), vc.getVerbs());
+			}
+
+		}
+	}
+	
+	public ArrayList<MissedAction> findMissedAction(ArrayList<Sentence> sentenceList, boolean forValidation)
 	{
 		ArrayList<MissedAction> missedAction = new ArrayList<MissedAction>(); 
-		checkAndLoadPattern();
-		checkAndLoadVerbCluster();
+
+		if(this.patternSet == null)
+			checkAndLoadPattern();
+		if(this.userCluster == null || this.systemCluster == null)
+			checkAndLoadVerbCluster();
 		findRepresentiveVerb(sentenceList);
 		ArrayList<PatternPathRoad> roadList = drawPatternPath(sentenceList);
 		ArrayList<PatternPathRoad> optimalRoute = OptimalRouteGenerator.getOptimalRoute(sentenceList.size(),roadList);
 		
-		System.out.println("--- Optimal Pattern Selected ---");
+		System.out.print("Optimal Pattern : ");
 		for(PatternPathRoad pp : optimalRoute)
 		{
 			System.out.println(pp.toString()+" : "+pp.getWeight()+"["+pp.hasMissed()+"]");
 			if(pp.hasMissed())
 			{
-				for(MissedAction ma :pp.getMissedActionMap()){
+				/*for(MissedAction ma :pp.getMissedActionMap()){
 					System.out.println(ma);
-				}
+				}*/
 				missedAction.addAll(pp.getMissedActionMap());
 			}
 		}
@@ -42,35 +73,29 @@ public class ActionFinderController {
 
 	}
 
-	private static void checkAndLoadVerbCluster() {
+	private void checkAndLoadVerbCluster() {
 		// TODO Auto-generated method stub
-		if(VerbClusterInstance.UserVerbCluster == null || VerbClusterInstance.SystemVerbCluster == null)
+		userCluster = new HashMap<String, String>();
+		systemCluster = new HashMap<String, String>();
+		
+		VerbClusterAccessor vca = new VerbClusterAccessor();
+		ArrayList<VerbCluster> clusterList = vca.getAllClusters();
+		
+		for(VerbCluster vc : clusterList)
 		{
-			VerbClusterAccessor vca = new VerbClusterAccessor();
-			ArrayList<VerbCluster> clusterList = vca.getAllClusters();
-			HashMap<String, String> userCluster = new HashMap<String, String>();
-			HashMap<String, String> systemCluster = new HashMap<String, String>();
-			
-			for(VerbCluster vc : clusterList)
-			{
-				if (vc.getSubjectType().equals("u"))
-					userCluster.put(vc.getRepresentives(), vc.getVerbs());
-				else
-					systemCluster.put(vc.getRepresentives(), vc.getVerbs());
-			}
-			VerbClusterInstance.UserVerbCluster = userCluster;
-			VerbClusterInstance.SystemVerbCluster = systemCluster;
+			if (vc.getSubjectType().equals("u"))
+				userCluster.put(vc.getRepresentives(), vc.getVerbs());
+			else
+				systemCluster.put(vc.getRepresentives(), vc.getVerbs());
 		}
 	}
 
-	private static void checkAndLoadPattern() {
+	private void checkAndLoadPattern() {
 		// TODO Auto-generated method stub
-		PatternFragmentSet patternSet = PatternGenerator.PatternSetInstance.PatternSet;
-		
-		if(patternSet == null)
-		{
-			PatternGenerator.PatternSetInstance.PatternSet = new PatternAccessor().getPatternSet();
-		}
+		if(PatternSetInstance.PatternSet == null)
+			patternSet = new PatternAccessor().getPatternSet();
+		else
+			patternSet = PatternSetInstance.PatternSet;
 		
 		//debug
 //		for(PatternFragment pf : PatternGenerator.PatternSetInstance.PatternSet){
@@ -79,18 +104,21 @@ public class ActionFinderController {
 //		}
 	}
 
-	private static void findRepresentiveVerb(ArrayList<Sentence> sentenceList) {
+	public void findRepresentiveVerb(ArrayList<Sentence> sentenceList) {
 		for(Sentence sen : sentenceList)
 		{
+			if(sen.getRepresentVerb() != null)
+				continue;
+			
 			if(sen.getVerb() == null || sen.getVerb().equals(""))
 			{
 				break;
 			}
 			if(sen.getSentenceType() == 'u')
 			{
-				for(String uClust : VerbClusterInstance.UserVerbCluster.keySet())
+				for(String uClust : userCluster.keySet())
 				{
-					if(VerbClusterInstance.UserVerbCluster.get(uClust).contains(sen.getVerb()))
+					if(userCluster.get(uClust).contains(sen.getVerb()))
 					{
 						//System.out.println("U-Detected : "+sen.getVerb() + "->" + uClust);
 						sen.setRepresentVerb(uClust);
@@ -99,9 +127,9 @@ public class ActionFinderController {
 			}
 			else if(sen.getSentenceType() == 's')
 			{
-				for(String sClust : VerbClusterInstance.SystemVerbCluster.keySet())
+				for(String sClust : systemCluster.keySet())
 				{
-					if(VerbClusterInstance.SystemVerbCluster.get(sClust).contains(sen.getVerb()))
+					if(systemCluster.get(sClust).contains(sen.getVerb()))
 					{
 						//System.out.println("S-Detected : "+sen.getVerb() + "->" + sClust);
 						sen.setRepresentVerb(sClust);
@@ -114,9 +142,11 @@ public class ActionFinderController {
 			{
 				HashMap<String, String> verbMap = null;
 				if(sen.getSentenceType() == 'u')
-					verbMap = VerbClusterInstance.UserVerbCluster;
+					verbMap = userCluster;
 				else if(sen.getSentenceType() == 's')
-					verbMap = VerbClusterInstance.SystemVerbCluster;
+					verbMap = systemCluster;
+				else
+					System.out.println("=== Exception Sentence Type :"+sen.getSentenceContents()+":"+sen.getSentenceContents()+" ===");
 				
 				double min_distance = 1000.0;
 				String similarVerb = "";
@@ -163,10 +193,10 @@ public class ActionFinderController {
 			origin= origin + sen.getSentenceType()+":"+sen.getVerb()+"-";
 			reps= reps + sen.getSentenceType()+":"+sen.getRepresentVerb()+"-";
 		}
-		System.out.println("Representive generated : "+origin + "==>"+reps );
+		//System.out.println("Representive generated : "+origin + "==>"+reps );
 	}
 	
-	private static ArrayList<PatternPathRoad> drawPatternPath(ArrayList<Sentence> sentenceList)
+	private ArrayList<PatternPathRoad> drawPatternPath(ArrayList<Sentence> sentenceList)
 	{
 		ArrayList<PatternPathRoad> roadList = new ArrayList<PatternPathRoad>(); 
 		//all match is from the each sentence
@@ -178,7 +208,7 @@ public class ActionFinderController {
 			//expanding size find similarity 
 			while(sentenceIndex+i < sentenceList.size())
 			{
-				for(PatternFragment pf : PatternGenerator.PatternSetInstance.PatternSet)
+				for(PatternFragment pf : patternSet)
 				{
 					//if pattern is larger, the step is discard
 					if(i+1 > pf.getVerbList().size())
@@ -215,7 +245,7 @@ public class ActionFinderController {
 		return roadList;
 	}
 
-	private static void checkHighRoadAndAdd(ArrayList<PatternPathRoad> roadList, PatternPathRoad ppr) {
+	private void checkHighRoadAndAdd(ArrayList<PatternPathRoad> roadList, PatternPathRoad ppr) {
 		for(PatternPathRoad road : roadList){
 			if(ppr.getFrom() == road.getFrom() && ppr.getTo() == road.getTo())
 			{
@@ -235,7 +265,7 @@ public class ActionFinderController {
 		
 	}
 
-	private static ArrayList<Sentence> getScenarioPiece(ArrayList<Sentence> sentenceList, int from, int to) {
+	private ArrayList<Sentence> getScenarioPiece(ArrayList<Sentence> sentenceList, int from, int to) {
 		ArrayList<Sentence> retList = new ArrayList<Sentence>();
 		for(int i=from ; i<=to ;i++)
 		{
@@ -245,7 +275,7 @@ public class ActionFinderController {
 		return retList;
 	}
 	
-	private static void printSentenceList(ArrayList<Sentence> list)
+	private void printSentenceList(ArrayList<Sentence> list)
 	{
 		for(Sentence sen : list)
 		{
@@ -254,7 +284,7 @@ public class ActionFinderController {
 		System.out.println("");
 	}
 
-	private static MissedAction getMissedActionObject(int prev,int index,String patternString)
+	private MissedAction getMissedActionObject(int prev,String prevSequenceString,int index,String patternString)
 	{
 		String[] sArr = patternString.split(":");
 		String sub = "";
@@ -263,11 +293,11 @@ public class ActionFinderController {
 		else
 			sub = "user";
 		String verb = sArr[1];
-		return new MissedAction(prev, index, sub, verb);
+		return new MissedAction(prev,prevSequenceString, index, sub, verb);
 		
 	}
 	
-	private static PatternPathRoad getPatternRoadWithSimilarity(int from, int to,ArrayList<Sentence> target, PatternFragment pf)
+	private PatternPathRoad getPatternRoadWithSimilarity(int from, int to,ArrayList<Sentence> target, PatternFragment pf)
 	{
 		//debug
 //		System.out.print("Target : ");
@@ -287,25 +317,39 @@ public class ActionFinderController {
 
 			String targetString = target.get(j).getSentenceType()+":"+target.get(j).getRepresentVerb();
 			String patternString = pf.getVerbList().get(i);
+
 			
 			if(targetString.equals(patternString)){
 				i++;
 				j++;
 				matched++;
+				
 			}
 			
 			else{
-				missedAction.add(getMissedActionObject(from + j, from +j+i,patternString));
+				String prevSentenceString = null;
+				if(j == 0)
+					prevSentenceString = "Beginning";
+				else
+					prevSentenceString = target.get(j-1).getSentenceType()+":"+target.get(j-1).getRepresentVerb();
+				
+				missedAction.add(getMissedActionObject(from + j, prevSentenceString, from +j+i,patternString));
 				i++;
 			}
 			
 			//if target is the last sentence but pattern is not
 			if(j == target.size())
 			{
+				String prevSentenceString = null;
+				if(j == 0)
+					prevSentenceString = "Beginning";
+				else
+					prevSentenceString = target.get(j-1).getSentenceType()+":"+target.get(j-1).getRepresentVerb();
+				
 				for(int k=i;k<pf.getVerbList().size();k++)
 				{
 					String lastPatternString = pf.getVerbList().get(k);
-					missedAction.add(getMissedActionObject(from + j, from + j+k-1,lastPatternString));
+					missedAction.add(getMissedActionObject(from + j, prevSentenceString, from + j+k-1,lastPatternString));
 				}
 			}
 			//System.out.println(targetString+" & "+patternString);

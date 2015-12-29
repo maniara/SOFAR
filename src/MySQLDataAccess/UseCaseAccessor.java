@@ -72,6 +72,7 @@ public class UseCaseAccessor {
 	
 	public ArrayList<UseCase> getUseCaseList(String projectID)
 	{
+		FlowAccessor fa = new FlowAccessor();
 		ArrayList<UseCase> UCList = new ArrayList<UseCase>();
 		
 		Statement stmt = null;
@@ -91,6 +92,7 @@ public class UseCaseAccessor {
 		try{
 			while(rs.next())
 			{
+				String usecaseID = rs.getString("usecaseID");
 				//UseCase(String projectID, String usecaseID, String usecaseName, String preCondition, String postCondition, String usecaseDescription, String extendsOf, String includeOf)
 				UseCase uc = new UseCase(rs.getString("projectID"),rs.getString("usecaseID"),rs.getString("usecaseName"),rs.getString("actor"),rs.getString("preCondition"), rs.getString("postCondition"), rs.getString("usecaseDescription"));
 				if(rs.getString("includedOf") != null)
@@ -98,6 +100,16 @@ public class UseCaseAccessor {
 				if(rs.getString("extendsOf") != null)
 					uc.setExtendsOf(rs.getString("extendsOf"));
 				UCList.add(uc);
+				
+				fa.getFlowList(projectID, usecaseID,'u');
+				for(Flow f : fa.getFlowList(projectID, usecaseID,'u'))
+				{
+					if(!f.getIsAlternative())
+					{
+						f.addAllSentence();
+						uc.addFlow(f);
+					}
+				}
 			}
 		}
 		catch(Exception ex) {ex.printStackTrace();}

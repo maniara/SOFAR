@@ -13,6 +13,11 @@ public class PatternFragmentSet extends HashSet<PatternFragment>{
 		}
 		return false;
 	}
+	
+	public PatternFragment get(int index)
+	{
+		return this.get(index);
+	}
 
 	public void addPrevVerbsCount(String verbString) {
 		for(PatternFragment pf: this  )

@@ -17,7 +17,7 @@ public class ValidateController {
 	public ValidateController()
 	{
 		shell = new Shell();
-		shell.setSize(430, 200);
+		shell.setSize(500, 200);
 		shell.setText("Validation Controller");
 
 		Display display = Display.getDefault();
@@ -39,10 +39,11 @@ public class ValidateController {
 		
 		Text targetProjectText = new Text(shell, SWT.NONE);
 		targetProjectText.setBounds(170,10,50,15);
+		targetProjectText.setText("SKP");
 		
 		Button targetProjectButton = new Button(shell, SWT.NONE);
-		targetProjectButton.setText("Submit");
-		targetProjectButton.setBounds(250, 7, 50, 20);
+		targetProjectButton.setText("One Sentence Validation");
+		targetProjectButton.setBounds(250, 7, 200, 25);
 		targetProjectButton.addSelectionListener(new SelectionListener(){
 
 			@Override
@@ -52,7 +53,7 @@ public class ValidateController {
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {
 				ValidatorController vc =new ValidatorController();
-				vc.perform(targetProjectText.getText());
+				vc.doSentenceValidation(targetProjectText.getText());
 			}});
 		
 	}

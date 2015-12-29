@@ -36,6 +36,7 @@ public class ActionFlowGraphGenerator {
 	
 	public void makeActionFlowGraph()
 	{
+		System.out.println("=== Graph Generating ===");
 		setRepresentiveVerb();
 		makeGraph();
 	}
@@ -114,9 +115,9 @@ public class ActionFlowGraphGenerator {
 		}
 			
 		//GraphViewer.draw(this.graph);
-		printGraph();
+		//printGraph();
 		
-		System.out.println("Graph Generated");
+		System.out.println("=== Graph Generated ===");
 	}
 	
 	private void printGraph()
@@ -197,7 +198,7 @@ public class ActionFlowGraphGenerator {
 		//System.out.println(type+":"+verb);
 		for(VerbCluster vc : clusterList)
 		{
-
+			try{
 			if(vc.getSubjectType().equals(type) && vc.getVerbs().contains(verb))
 			{
 				for(String vs : vc.getVerbs().split(";"))
@@ -205,6 +206,9 @@ public class ActionFlowGraphGenerator {
 					if(vs.equals(verb))
 						return vc.getRepresentives();
 				}
+			}
+			}catch(java.lang.NullPointerException e){
+				System.out.println(vc.toString());
 			}
 		}
 		

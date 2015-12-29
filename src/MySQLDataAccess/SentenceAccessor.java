@@ -300,6 +300,71 @@ public class SentenceAccessor {
 		return SList;
 	}
 	
+	public ArrayList<Sentence> getBasicFlowSentenceList(String projectID, String usecaseID)
+	{
+		//System.out.println("getSentenceList starts");
+		ArrayList<Sentence> SList = new ArrayList<Sentence>();
+		
+		Statement stmt = null;
+		ResultSet rs = null;
+		String query = String.format("SELECT * FROM "+DataAccessString.dbName+".sentence Where projectID = '%s' and usecaseID = '%s' and flowID = (select flowID from "+DataAccessString.dbName+".flow where projectId = '%s' and usecaseid = '%s' and isAlternative='N')",projectID, usecaseID, projectID,usecaseID);
+		//System.out.println(query);
+		
+		try{
+			stmt = getConnection().createStatement();
+			if(stmt == null)
+			{
+				System.out.println("");
+			}
+			rs = stmt.executeQuery(query);
+		}
+		catch(SQLException ex)
+		{
+			System.out.println("Query Execution Error");
+		}
+
+		try{
+			while(rs.next())
+			{
+				//String projectID, String usecaseID, String flowID, String sentenceOrder, String sentenceContents, char sentenceType
+				Sentence sen = new Sentence(rs.getString("projectID"),rs.getString("usecaseID"),rs.getString("flowID"),rs.getString("sentenceOrder"), rs.getString("sentenceContents"), rs.getString("sentenceType").toCharArray()[0], rs.getInt("sentenceSeq"), getBoolean(rs.getString("isRepeatable")),getBoolean(rs.getString("isOptional")));
+				sen.setSentenceNum(rs.getString("sentenceNum"));
+				if(rs.getString("mainVerb") != null)
+					sen.setVerb(rs.getString("mainVerb"));
+				SList.add(sen);
+			}
+		}
+		catch(Exception ex) {}
+		
+		//set next and previous U/S type
+		Collections.sort(SList);
+		
+		for(int i=0;i<SList.size();i++)
+		{
+			String prev = null;
+			String next = null;
+			
+			if(i==0)
+			{
+				next = SList.get(i+1).getSentenceType()+"";
+			}
+			else if(i==SList.size()-1)
+			{
+				prev = SList.get(i-1).getSentenceType()+"";
+			}
+			else
+			{
+				next = SList.get(i+1).getSentenceType()+"";
+				prev = SList.get(i-1).getSentenceType()+"";
+			}
+			
+			SList.get(i).setPrevType(prev);
+			SList.get(i).setNextType(next);
+		}
+		
+		return SList;
+	}
+	
 	public ArrayList<Sentence> getSentenceList(String projectID, String usecaseID, String flowID)
 	{
 		//System.out.println("getSentenceList starts");
@@ -406,7 +471,7 @@ public class SentenceAccessor {
 		ArrayList<Sentence> SList = new ArrayList<Sentence>();
 		Statement stmt = null;
 		ResultSet rs = null;
-		String query = String.format("SELECT * FROM "+DataAccessString.dbName+".training_basicflow_sentence where projectid != "+targetProjectId);
+		String query = String.format("SELECT * FROM "+DataAccessString.dbName+".training_basicflow_sentence where projectid != '"+targetProjectId+"'");
 		try{
 			stmt = conn.createStatement();
 			rs = stmt.executeQuery(query);

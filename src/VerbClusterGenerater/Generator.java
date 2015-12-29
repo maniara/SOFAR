@@ -61,9 +61,7 @@ public class Generator {
 		}
 		
 		DictionaryAccessor da = new DictionaryAccessor();
-		System.out.println("--- User Clustering ---");
 		HashMap<String,String> userVerbClusterMap = ClusterCreatorController.createDicBasedCluster(da.getUserDictionary(),userVerb,userFreqMap,"u");
-		System.out.println("--- System Clustering ---");
 		HashMap<String,String> systemVerbClusterMap = ClusterCreatorController.createDicBasedCluster(da.getSystemDictionary(),systemVerb,systemFreqMap,"s");
 		
 		if(needSave){
@@ -92,7 +90,7 @@ public class Generator {
 			
 			for(String key:systemVerbClusterMap.keySet())
 			{
-				String verbs = userVerbClusterMap.get(key);
+				String verbs = systemVerbClusterMap.get(key);
 				clusterList.add(new VerbCluster(key,verbs,"1","s"));
 			}
 			return clusterList;

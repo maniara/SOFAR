@@ -135,7 +135,7 @@ public class PatternGeneratorController {
 			public void widgetSelected(SelectionEvent arg0) {
 				new VerbClusterAccessor().deleteAllGeneratedCluster();
 				makeDicBasedCluster();
-				System.out.println("Clustering Complete");
+				System.out.println("=== Clustering Complete ===");
 			}
 		});
 		dicClusterButton.setBounds(33, 116, 153, 25);
@@ -187,7 +187,7 @@ public class PatternGeneratorController {
 		
 		Button btnNewButton_5 = new Button(shell, SWT.NONE);
 		btnNewButton_5.setBounds(33, 270, 153, 25);
-		btnNewButton_5.setText("Analyze");
+		btnNewButton_5.setText("Extract Patterns");
 		btnNewButton_5.addSelectionListener(new SelectionAdapter()
 		{
 			@Override
@@ -221,6 +221,7 @@ public class PatternGeneratorController {
 	
 	private void generatePattern()
 	{
+		System.out.println("=== Patterns Extracting ===");
 		if(afg == null)
 		{
 			afg = new ActionFlowGraphGenerator();
@@ -228,7 +229,9 @@ public class PatternGeneratorController {
 		}
 		GeneratorController cont = new GeneratorController(afg.getGraph());
 		
-		PatternGenerator.PatternSetInstance.PatternSet = cont.makePatterns();
+		PatternGenerator.PatternSetInstance.PatternSet = cont.makePatterns(false, null);
+		
+		System.out.println("=== Patterns Extracted ===");
 	}
 	
 	private void drawPatternTree()
