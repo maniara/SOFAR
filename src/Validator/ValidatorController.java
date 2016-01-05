@@ -88,8 +88,8 @@ public class ValidatorController {
 					int MissedPrevAction = ma.getPrevSequence();
 					System.out.println("REM: "+removedAction+"("+removedActionNum +"), GOT: "+missedAction +"("+(MissedPrevAction+1)+")");
 					
-					//if(removedAction.equals(missedAction) && removedActionNum == MissedPrevAction+1){
-					if(removedAction.equals(missedAction)){
+					if(removedAction.equals(missedAction) && removedActionNum == MissedPrevAction+1){
+					//if(removedAction.equals(missedAction)){
 						correct++;
 						findThisTry = true;
 					}
