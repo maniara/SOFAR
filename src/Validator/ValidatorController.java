@@ -27,13 +27,13 @@ public class ValidatorController {
 	private ArrayList<UseCase> targetProject;
 	//ArrayList<UseCase> randomRemovedTargetProject;
 	
-	public void doSentenceValidation(String targetProjectId){
+	public Result doSentenceValidation(String targetProjectId){
 		this.targetProjectId = targetProjectId;
 		getVerbCluster(targetProjectId);
 		getFlowGraph();
 		getPatterns();
 		getTargetProject(targetProjectId);
-		validate();
+		return validate();
 	}
 
 	private void getTargetProject(String targetProjectId) {
@@ -43,7 +43,7 @@ public class ValidatorController {
 		
 	}
 
-	private void validate() {
+	private Result validate() {
 		int totalTry = 0;
 		int correct = 0;
 		int incorrect = 0;
@@ -107,6 +107,8 @@ public class ValidatorController {
 		System.out.println("Missed Sentence #: "+totalTry);
 		System.out.println("Extrected Action: "+allExtracted);
 		System.out.println("Correct: "+correct);
+		
+		return new Result(totalTry,allExtracted,correct);
 	}
 
 	private void getFlowGraph() {
