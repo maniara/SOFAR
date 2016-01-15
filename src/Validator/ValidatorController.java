@@ -130,11 +130,11 @@ public class ValidatorController {
 	{
 		GeneratorController cont = new GeneratorController(flowGraph);	
 		patterns = cont.makePatterns(true, targetProjectId);
-		/*for(PatternFragment pf : patterns)
+		for(PatternFragment pf : patterns)
 		{
 			if(pf != null)
 				System.out.println(pf);
-		}*/
+		}
 		System.out.println("--- "+patterns.size()+" patterns generated ---");
 	}
 
