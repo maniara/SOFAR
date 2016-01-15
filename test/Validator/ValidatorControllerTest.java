@@ -24,7 +24,7 @@ import VerbClusterGenerater.Generator;
 
 public class ValidatorControllerTest {
 	
-	private ArrayList<String> getProjectList()
+	private ArrayList<String> getIndustryProjectList()
 	{
 		ArrayList<String> prjList = new ArrayList<String>();
 		prjList.add("SKP");
@@ -33,6 +33,20 @@ public class ValidatorControllerTest {
 		prjList.add("UIS");
 		return prjList;
 	}
+	
+	private ArrayList<String> getAcademicProjectList()
+	{
+		ArrayList<String> prjList = new ArrayList<String>();
+		prjList.add("ATM");
+		prjList.add("OSS");
+		prjList.add("PRS");
+		prjList.add("POS");
+		prjList.add("TMS");
+		prjList.add("EFF");
+		prjList.add("OPS");
+		return prjList;
+	}
+	
 	@Test
 	public void doSentenceValidationTestForAllowance_RI()
 	{
@@ -73,7 +87,7 @@ public class ValidatorControllerTest {
 	@Test
 	public void doSentenceValidationTestForAllowance_Occurences_By_Max()
 	{
-		ArrayList<String> prjList = this.getProjectList();
+		ArrayList<String> prjList = this.getIndustryProjectList();
 		ArrayList<Result> resultList = new ArrayList<Result>();
 				
 		//Thresholds.Weight_Of_Scenario_Similarity_EQUALITY_PATTERNSCORE = {0.2,0.8};
@@ -94,7 +108,7 @@ public class ValidatorControllerTest {
 	@Test
 	public void doSentenceValidationTestForRI_FF_Share()
 	{
-		ArrayList<String> prjList = this.getProjectList();
+		ArrayList<String> prjList = this.getIndustryProjectList();
 		ArrayList<Result> resultList = new ArrayList<Result>();
 				
 		//Thresholds.Weight_Of_Scenario_Similarity_EQUALITY_PATTERNSCORE = {0.2,0.8};
@@ -130,7 +144,7 @@ public class ValidatorControllerTest {
 	@Test
 	public void doSentenceValidationTestForSimilarity_Equality_Share()
 	{
-		ArrayList<String> prjList = this.getProjectList();
+		ArrayList<String> prjList = this.getIndustryProjectList();
 		ArrayList<Result> resultList = new ArrayList<Result>();
 				
 		//Thresholds.Weight_Of_Scenario_Similarity_EQUALITY_PATTERNSCORE = {0.2,0.8};
@@ -153,7 +167,7 @@ public class ValidatorControllerTest {
 	@Test
 	public void doSentenceValidationTestForWord_Min_Frequency_On_Similarity()
 	{
-		ArrayList<String> prjList = this.getProjectList();
+		ArrayList<String> prjList = this.getIndustryProjectList();
 		ArrayList<Result> resultList = new ArrayList<Result>();
 				
 		//Thresholds.Weight_Of_Scenario_Similarity_EQUALITY_PATTERNSCORE = {0.2,0.8};
@@ -174,7 +188,7 @@ public class ValidatorControllerTest {
 	@Test
 	public void doSentenceValidationTestForPattern_Weight_Share()
 	{
-		ArrayList<String> prjList = this.getProjectList();
+		ArrayList<String> prjList = this.getIndustryProjectList();
 		ArrayList<Result> resultList = new ArrayList<Result>();
 				
 		//Thresholds.Weight_Of_Scenario_Similarity_EQUALITY_PATTERNSCORE = {0.2,0.8};
@@ -201,7 +215,7 @@ public class ValidatorControllerTest {
 	@Test
 	public void doSentenceValidationTest()
 	{
-		ArrayList<String> prjList = this.getProjectList();
+		ArrayList<String> prjList = this.getIndustryProjectList();
 		ArrayList<Result> resultList = new ArrayList<Result>();
 				
 		//Thresholds.Weight_Of_Scenario_Similarity_EQUALITY_PATTERNSCORE = {0.2,0.8};
