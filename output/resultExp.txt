@@ -1,27 +1,3 @@
-Loading modules
-set up:
-... finding noun and verb <roots>
-... calculating IC <roots> ...
-... ICFinder
-... DepthFinder
-... PathFinder
-... JiangAndConrath
-... Lin
-... Resnik
-... Path
-... WuAndPalmer
-... Adapted Lesk : all relations
-... Adapted Lesk (1)
-... Adapted Lesk (2)
-... HirstAndStOnge
-... LeacockAndChodorow
-... calculating depths of <roots> ...
-
-
-Java WordNet::Similarity using WordNet 3.0 : loaded
-
-
-
 === User verb Clustering ===
 === System verb Clustering ===
 --- 17 cluster generated (SAMPLE-request:request;submit;click;remove;push;send) ---
