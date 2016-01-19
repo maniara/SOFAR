@@ -121,7 +121,9 @@ public class ValidatorController {
 
 	private void getVerbCluster(String targetProjectId) {
 		Generator vcGen = new Generator();
-		clusterList = vcGen.makeVerbClusterForValidation(targetProjectId);
+		//clusterList = vcGen.makeVerbClusterForValidation(targetProjectId);
+		clusterList = vcGen.makeVerbCluster();
+		//System.out.println(clusterList.size());
 		System.out.println("--- "+clusterList.size()+" cluster generated (SAMPLE-"+clusterList.get(0)+") ---");
 		
 	}

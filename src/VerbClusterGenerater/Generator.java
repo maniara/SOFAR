@@ -27,10 +27,10 @@ public class Generator {
 		ArrayList<Sentence> sentenceList = sa.getTrainingSentenceListForValidation(targetProjectId);
 		return performGenerator(sentenceList,false);
 	}
-	public void makeVerbCluster(){
+	public ArrayList<VerbCluster> makeVerbCluster(){
 		SentenceAccessor sa = new SentenceAccessor();
 		ArrayList<Sentence> sentenceList = sa.getAllTrainingSentenceList();
-		performGenerator(sentenceList,true);
+		return performGenerator(sentenceList,false);
 	}
 	
 	private ArrayList<VerbCluster> performGenerator(ArrayList<Sentence> sentenceList, boolean needSave){
