@@ -22,7 +22,7 @@ public class Thresholds {
 	
 	public static double Word_Min_Frequency_On_Similarity = 0.2;
 	
-	public static double[] Weight_Of_Scenario_Similarity_EQUALITY_PATTERNSCORE={0.1,0.9};
+	public static double[] Weight_Of_Scenario_Similarity_EQUALITY_PATTERNSCORE={0.5,0.5};
 	
 	//For the Dictionary based Clustering
 	public static double Word_Max_Distance = 0.5;

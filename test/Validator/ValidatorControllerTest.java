@@ -190,13 +190,15 @@ public class ValidatorControllerTest {
 	{
 		ArrayList<String> prjList = this.getIndustryProjectList();
 		ArrayList<Result> resultList = new ArrayList<Result>();
+		int stage = 0;
 				
 		//Thresholds.Weight_Of_Scenario_Similarity_EQUALITY_PATTERNSCORE = {0.2,0.8};
 		for(String prj : prjList){
-			for(double i = 0.0 ; i<=1 ; i=i+0.2){
-				for(double j= 0.0 ; j<=1 ; j=j+0.2){
+			for(double i = 0.0 ; i<=1 ; i=i+0.3){
+				for(double j= 0.0 ; j<=1 ; j=j+0.3){
 					if(j + i > 1)
 						continue;
+					System.out.println("--"+stage+"--");
 					Thresholds.Weight_Of_PatternWeight_COUNT_AVGRI_LENGHT[0] = i;
 					Thresholds.Weight_Of_PatternWeight_COUNT_AVGRI_LENGHT[1] = j;
 					Thresholds.Weight_Of_PatternWeight_COUNT_AVGRI_LENGHT[2] = 1.0-i-j;
@@ -204,6 +206,7 @@ public class ValidatorControllerTest {
 					Result r = v.doSentenceValidation(prj);
 					r.setProjectCode(prj);
 					resultList.add(r);
+					stage++;
 				}
 			}
 
