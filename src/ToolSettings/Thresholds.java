@@ -16,7 +16,7 @@ public class Thresholds {
 	
 	public static double Min_Average_Weight = 0.01;
 	
-	public static double[] Weight_Of_PatternWeight_COUNT_AVGRI_LENGHT={0.2,0.2,0.6};
+	public static double[] Weight_Of_PatternWeight_COUNT_AVGRI_LENGHT={0.5,0.2,0.3};
 	
 	public static double Matched_Pattern_Min_Equal_Rate = 0.3;
 	

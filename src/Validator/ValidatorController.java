@@ -35,12 +35,72 @@ public class ValidatorController {
 		getTargetProject(targetProjectId);
 		return validate();
 	}
+	
+	public Result doOneScenarioValidation(String targetProjectId, String ucId){
+		this.targetProjectId = targetProjectId;
+		getVerbCluster(targetProjectId);
+		getFlowGraph();
+		getPatterns();
+		getTargetScenario(targetProjectId,ucId);
+		return validate();
+	}
+	
+	private void getTargetScenario(String targetProjectId,String ucId){
+		UseCaseAccessor ua = new UseCaseAccessor();
+		ArrayList<UseCase> ucList= ua.getUseCaseList(targetProjectId);
+		
+		targetProject = new ArrayList<UseCase>();
+		for(UseCase uc : ucList)
+		{
+			if(uc.getUseCaseID().equals(ucId))
+			{
+				targetProject.add(uc);
+				break;
+			}
+		}
+	}
+	
+	public Result doSentenceValidationNoOmit(String targetProjectId)
+	{
+		this.targetProjectId = targetProjectId;
+		getVerbCluster(targetProjectId);
+		getFlowGraph();
+		getPatterns();
+		getTargetProject(targetProjectId);
+		return validateNoOmit();
+	}
 
 	private void getTargetProject(String targetProjectId) {
 		UseCaseAccessor ua = new UseCaseAccessor();
 		targetProject = ua.getUseCaseList(targetProjectId);
 		System.out.println("--- "+ targetProject.size()+" use case loaded ---");
 		
+	}
+	
+	private Result validateNoOmit(){
+		int totalTry = 0;
+		int correct = 0;
+
+		for(UseCase uc : targetProject)
+		{
+			totalTry++;
+			ArrayList<Sentence> sentenceList = new SentenceAccessor().getBasicFlowSentenceList(uc.getProjectID(), uc.getUseCaseID());
+			ActionFinderController afc = new ActionFinderController(patterns,clusterList);
+			afc.findRepresentiveVerb(sentenceList);
+			System.out.print("Original Scenario : ");
+			for(Sentence sen : sentenceList)
+			{
+				System.out.print(sen.getSentenceType()+":"+sen.getRepresentVerb()+"-");
+			}
+			System.out.println("");
+			
+			ArrayList<MissedAction> missedActionMap = afc.findMissedAction(sentenceList,true);
+			
+			if(missedActionMap.size() == 0)
+				correct++;
+		}
+		
+		return new Result(totalTry,0,correct);
 	}
 
 	private Result validate() {
@@ -64,17 +124,22 @@ public class ValidatorController {
 			for(int i=0;i<originSentenceList.size();i++){
 				boolean findThisTry = false; 
 				totalTry++;
+//				if(totalTry != 2)
+//					continue;
 				Sentence removedSentence = originSentenceList.get(i);
 				ArrayList<Sentence> sentenceList = new ArrayList<Sentence>(originSentenceList);
 				sentenceList.remove(i);
 				System.out.println("-----"+uc.getUseCaseID()+"-----");
 				System.out.println("'"+removedSentence.getVerb()+"'("+removedSentence.getSentenceOrder()+") is removed");
-				System.out.print("Input Scenario : ");
+				//System.out.print("Input Scenario : ");
+				System.out.print("Try "+totalTry+"/");
 				for(Sentence sen : sentenceList)
 				{
 					System.out.print(sen.getSentenceType()+":"+sen.getRepresentVerb()+"-");
 				}
 				System.out.println("");
+				if(totalTry == 2)
+					System.out.print("");
 				ArrayList<MissedAction> missedActionMap = afc.findMissedAction(sentenceList,true);
 				System.out.println(missedActionMap);
 				
@@ -102,6 +167,7 @@ public class ValidatorController {
 				
 				
 			}
+
 		}
 		
 		System.out.println("Missed Sentence #: "+totalTry);
@@ -121,8 +187,8 @@ public class ValidatorController {
 
 	private void getVerbCluster(String targetProjectId) {
 		Generator vcGen = new Generator();
-		//clusterList = vcGen.makeVerbClusterForValidation(targetProjectId);
-		clusterList = vcGen.makeVerbCluster();
+		clusterList = vcGen.makeVerbClusterForValidation(targetProjectId);
+		//clusterList = vcGen.makeVerbCluster();
 		//System.out.println(clusterList.size());
 		System.out.println("--- "+clusterList.size()+" cluster generated (SAMPLE-"+clusterList.get(0)+") ---");
 		
@@ -130,7 +196,7 @@ public class ValidatorController {
 	
 	private void getPatterns()
 	{
-		GeneratorController cont = new GeneratorController(flowGraph);	
+		GeneratorController cont = new GeneratorController(flowGraph);
 		patterns = cont.makePatterns(true, targetProjectId);
 		/*for(PatternFragment pf : patterns)
 		{

@@ -169,5 +169,11 @@ public class Sentence implements Comparable<Sentence> {
 	{
 		return this.sentenceType+":"+this.getRepresentVerb();
 	}
+	
+	@Override
+	public String toString()
+	{
+		return getVerbString();
+	}
 
 }

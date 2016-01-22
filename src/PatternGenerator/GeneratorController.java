@@ -93,7 +93,7 @@ public class GeneratorController {
 		filteringDuplicated();
 		calculateWeight();
 		setRepVerbOfPattern();
-		//printPFSet();
+		printPFSet();
 
 		
 		/*for(PatternFragment pf : pfSet)

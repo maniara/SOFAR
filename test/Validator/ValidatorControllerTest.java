@@ -1,26 +1,8 @@
 package Validator;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-
 import org.junit.Test;
-
-import ActionFlowGraph.ActionFlowGraph;
-import ActionFlowGraph.ActionFlowGraphGenerator;
-import Entity.Project;
-import Entity.Sentence;
-import Entity.UseCase;
-import Entity.VerbCluster;
-import MissedActionFinder.ActionFinderController;
-import MissedActionFinder.MissedAction;
-import MySQLDataAccess.ProjectAccessor;
-import MySQLDataAccess.SentenceAccessor;
-import MySQLDataAccess.UseCaseAccessor;
-import PatternGenerator.GeneratorController;
-import PatternGenerator.PatternFragment;
-import PatternGenerator.PatternFragmentSet;
 import ToolSettings.Thresholds;
-import VerbClusterGenerater.Generator;
 
 public class ValidatorControllerTest {
 	
@@ -228,6 +210,49 @@ public class ValidatorControllerTest {
 			r.setProjectCode(prj);
 			resultList.add(r);
 		}
+		printResult(resultList);
+	}
+	
+	@Test
+	public void doSentenceValidationNoOmitTest()
+	{
+		ArrayList<String> prjList = this.getIndustryProjectList();
+		ArrayList<Result> resultList = new ArrayList<Result>();
+				
+		//Thresholds.Weight_Of_Scenario_Similarity_EQUALITY_PATTERNSCORE = {0.2,0.8};
+		for(String prj : prjList){
+			ValidatorController v = new ValidatorController();
+			Result r = v.doSentenceValidationNoOmit(prj);
+			r.setProjectCode(prj);
+			resultList.add(r);
+		}
+		printResult(resultList);
+	}
+	
+	@Test
+	public void doOneProjectValidationTest()
+	{
+		String prj = "SKP";
+		ArrayList<Result> resultList = new ArrayList<Result>();
+				
+		ValidatorController v = new ValidatorController();
+		Result r = v.doSentenceValidation(prj);
+		r.setProjectCode(prj);
+		resultList.add(r);
+		printResult(resultList);
+	}
+	
+	@Test
+	public void doOneScenarioValidationTest()
+	{
+		String prj = "SKP";
+		String uc = "SKP05";
+		ArrayList<Result> resultList = new ArrayList<Result>();
+				
+		ValidatorController v = new ValidatorController();
+		Result r = v.doOneScenarioValidation(prj, uc);
+		r.setProjectCode(prj);
+		resultList.add(r);
 		printResult(resultList);
 	}
 

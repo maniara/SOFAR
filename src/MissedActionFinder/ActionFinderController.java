@@ -59,7 +59,7 @@ public class ActionFinderController {
 		System.out.print("Optimal Pattern : ");
 		for(PatternPathRoad pp : optimalRoute)
 		{
-			System.out.println(pp.toString()+" : "+pp.getWeight()+"["+pp.hasMissed()+"]");
+			System.out.println(pp.toString()+"/"+pp.getEqualityScore()+"/"+pp.getPatternScore()+"/"+pp.getWeight());
 			if(pp.hasMissed())
 			{
 				/*for(MissedAction ma :pp.getMissedActionMap()){
@@ -202,7 +202,7 @@ public class ActionFinderController {
 		//all match is from the each sentence
 		for(int sentenceIndex = 0;sentenceIndex<sentenceList.size();sentenceIndex++){
 			//minimum size of pattern : 3
-			if(sentenceIndex + 2 >= sentenceList.size())
+			if(sentenceIndex + 1 >= sentenceList.size())
 				break;
 			int i=1;
 			//expanding size find similarity 
@@ -210,6 +210,8 @@ public class ActionFinderController {
 			{
 				for(PatternFragment pf : patternSet)
 				{
+					if(pf.toString().equals("u:request-s:save-s:display"))
+						System.out.print("");
 					//if pattern is larger, the step is discard
 					if(i+1 > pf.getVerbList().size())
 						continue;
@@ -222,7 +224,7 @@ public class ActionFinderController {
 					
 					PatternPathRoad ppr = getPatternRoadWithSimilarity(sentenceIndex,i+sentenceIndex+1,scenaraioPiece, pf);
 					
-					if(ppr.getWeight() != 0.0)
+					if(ppr != null && ppr.getWeight() != 0.0)
 					{
 						// = new PatternPathRoad(sentenceIndex,i+sentenceIndex+1,similarity,pf);
 						checkHighRoadAndAdd(roadList,ppr);
@@ -234,7 +236,7 @@ public class ActionFinderController {
 		}
 		for(int i = 0;i<sentenceList.size();i++)
 		{
-			roadList.add(new PatternPathRoad(i,i+1,0.0,null));
+			roadList.add(new PatternPathRoad(i,i+1,0.0,new PatternFragment("EMPTY")));
 		}
 		
 		/*for(PatternPathRoad pp:roadList)
@@ -337,8 +339,8 @@ public class ActionFinderController {
 				i++;
 			}
 			
-			//if target is the last sentence but pattern is not
-			if(j == target.size())
+			//target finished and pattern not finished
+			if(j == target.size() && i < pf.getVerbList().size())
 			{
 				String prevSentenceString = null;
 				if(j == 0)
@@ -352,6 +354,10 @@ public class ActionFinderController {
 					missedAction.add(getMissedActionObject(from + j, prevSentenceString, from + j+k-1,lastPatternString));
 				}
 			}
+			//target finished and pattern finished : no issue here
+			//pattern finished and target is not finished
+			else if(j < target.size() && i == pf.getVerbList().size())
+				return null;
 			//System.out.println(targetString+" & "+patternString);
 		}
 		/*if(matched > 1){
@@ -364,6 +370,7 @@ public class ActionFinderController {
 //		System.out.println("Matched:" + matched);
 		double equalRate =(double) (matched*2) / (pf.getVerbList().size()+target.size());
 		double weight = 0.0;
+		PatternPathRoad road;
 		if(equalRate >= Thresholds.Matched_Pattern_Min_Equal_Rate)
 		{
 //			System.out.print("Target : ");
@@ -375,13 +382,19 @@ public class ActionFinderController {
 			
 			weight =  Thresholds.Weight_Of_Scenario_Similarity_EQUALITY_PATTERNSCORE[0]*equalRate 
 					+ Thresholds.Weight_Of_Scenario_Similarity_EQUALITY_PATTERNSCORE[1]*pf.getAdjustedWeight();
+			
+			road = new PatternPathRoad(from,to,weight,pf);
+			road.setEqualityScore(equalRate);
+			road.setPatternScore(pf.getAdjustedWeight());
+			if(road.hasMissed())
+				road.setMissedActionMap(missedAction);
 		}
-		else
+		else{
+			road = new PatternPathRoad(from,to,weight,pf);
 			weight =  0.0;
-		
-		PatternPathRoad road = new PatternPathRoad(from,to,weight,pf);
-		if(road.hasMissed())
-			road.setMissedActionMap(missedAction);
+			if(road.hasMissed())
+				road.setMissedActionMap(missedAction);
+		}
 		
 		return road;
 	}
