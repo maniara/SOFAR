@@ -93,7 +93,7 @@ public class GeneratorController {
 		filteringDuplicated();
 		calculateWeight();
 		setRepVerbOfPattern();
-		//printPFSet();
+		printPFSet();
 
 		
 		/*for(PatternFragment pf : pfSet)
@@ -198,13 +198,14 @@ public class GeneratorController {
 		for(PatternFragment pf : filtered)
 		{
 			this.pfSet.remove(pf);
-
 		}
 	}
 	private void filteringByGraph() {
 		ArrayList<PatternFragment> filtered =new ArrayList<PatternFragment>();
 		for(PatternFragment pf : this.pfSet)
 		{
+			if(pf.toString().contains("u:request-s:modify-s:display"))
+				System.out.print("");
 			if(graph.hasPattern(pf.getVerbList()))
 			{
 				double weight = graph.calculateTotalWeight(pf.getVerbList());
@@ -246,6 +247,8 @@ public class GeneratorController {
 		
 		for(String v : verbCount.keySet())
 		{
+			if(v.equals("s:modify"))
+				System.out.print("");
 			if(!graph.getEdgeStringList().contains(v))
 			{
 				remList.add(v);
@@ -272,9 +275,14 @@ public class GeneratorController {
 					Sentence sen = f.getSentenceList().get(i);
 					if(sen.getVerbString().equals(v))
 					{
+
 						//there is a sentence that has same verb in graph
 						Sentence nextSen = f.getSentenceList().get(i+1);
 						String fragString = sen.getVerbString()+"-"+nextSen.getVerbString();
+						
+						if(fragString.equals("s:modify-s:display"))
+							System.out.print("");
+						
 						if(pfSet.containVerbString(fragString))
 						{
 							PatternFragment pf = pfSet.getPatternFragment(fragString);

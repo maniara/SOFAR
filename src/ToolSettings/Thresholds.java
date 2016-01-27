@@ -7,16 +7,16 @@ public class Thresholds {
 	public static double Edge_Weight_Threshold = 0.2;
 	
 	//Making patterns
-	public static double Allowance_Occurences_By_Max = 0.25;
-	public static double Allowance_RI = 0.1;
+	public static double Graph_Verb_Occr_Criteria = 0.15;
+	public static double Graph_Min_RI = 0.05;
 	
-	public static double Verb_Occurence_Threshold = 0.01;
+	public static double Clusteing_High_Freq_Criteria = 0.01;
 	
 	public static double CoOccur_Threshold = 0.3;
 	
 	public static double Min_Average_Weight = 0.01;
 	
-	public static double[] Weight_Of_PatternWeight_COUNT_AVGRI_LENGHT={0.2,0.2,0.6};
+	public static double[] Weight_Of_PatternWeight_COUNT_AVGRI_LENGHT={0.5,0.2,0.3};
 	
 	public static double Matched_Pattern_Min_Equal_Rate = 0.3;
 	

@@ -59,9 +59,9 @@ public class PatternPathRoad {
 	public String toString()
 	{
 		if(matchedPattern != null)
-			return from+"-"+this.matchedPattern.toString()+"-"+to;
+			return from+"=>"+to+"/"+this.matchedPattern.toString();
 		else
-			return from+"-EMPTY-"+to;
+			return from+"=>"+to+"/EMPTY";
 	}
 
 	public double getPatternScore() {

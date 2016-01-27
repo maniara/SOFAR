@@ -59,7 +59,7 @@ public class ClusterCreatorController {
 		for(String s:verbSet)
 		{
 			double freq = freqMap.get(s);
-			if(freq>Thresholds.Verb_Occurence_Threshold)
+			if(freq>Thresholds.Clusteing_High_Freq_Criteria)
 			{
 				majorVerbs.add(s);
 				System.out.println(s);
@@ -424,7 +424,7 @@ public class ClusterCreatorController {
 		
 		for(String v : verbs)
 		{
-			if(freqMap.get(v) > Thresholds.Verb_Occurence_Threshold){
+			if(freqMap.get(v) > Thresholds.Clusteing_High_Freq_Criteria){
 				//System.out.println(v+" is high");
 				highFreqVerbs.add(v);
 			}
