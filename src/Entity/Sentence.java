@@ -17,6 +17,11 @@ public class Sentence implements Comparable<Sentence> {
 	private String nextType;
 	private boolean hasRepresentive; //using in just sequence pattern generation
 	
+	public Sentence(String sentenceType, String representVerb)
+	{
+		this.sentenceContents = sentenceType;
+		this.representVerb = representVerb;
+	}
 	
 	public Sentence(String projectID, String usecaseID, String flowID, String sentenceOrder, String sentenceContents, char sentenceType, int sentenceSeq, boolean isRepeatable, boolean isOptional)
 	{

@@ -24,6 +24,13 @@ public class PatternFragment  implements Comparable<PatternFragment>{
 		totalGraphWeight= 0;
 	}
 	
+	public PatternFragment(ArrayList<String> verbStringList)
+	{
+		this.representVerb = verbStringList.get(verbStringList.size()-1);
+		verbStringList.remove(verbStringList.size()-1);
+		this.prevRepVerbs = verbStringList;
+	}
+	
 	public PatternFragment(String verbString)
 	{
 		this();

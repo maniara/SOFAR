@@ -299,7 +299,7 @@ public class ActionFinderController {
 		
 	}
 	
-	private PatternPathRoad getPatternRoadWithSimilarity(int from, int to,ArrayList<Sentence> target, PatternFragment pf)
+	public PatternPathRoad getPatternRoadWithSimilarity(int from, int to,ArrayList<Sentence> target, PatternFragment pf)
 	{
 		//debug
 //		System.out.print("Target : ");

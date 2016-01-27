@@ -36,7 +36,7 @@ public class ValidatorControllerTest {
 		//Thresholds.Weight_Of_Scenario_Similarity_EQUALITY_PATTERNSCORE = {0.2,0.8};
 		
 		for(double i = 0.00 ; i<0.5 ; i=i+0.05){
-			Thresholds.Allowance_RI = i;
+			Thresholds.Graph_Min_RI = i;
 			ValidatorController v = new ValidatorController();
 			resultList.add(v.doSentenceValidation("prs"));
 		}
@@ -75,7 +75,7 @@ public class ValidatorControllerTest {
 		//Thresholds.Weight_Of_Scenario_Similarity_EQUALITY_PATTERNSCORE = {0.2,0.8};
 		for(String prj : prjList){
 			for(double i = 0.00 ; i<0.5 ; i=i+0.05){
-				Thresholds.Allowance_Occurences_By_Max = i;
+				Thresholds.Graph_Verb_Occr_Criteria = i;
 				ValidatorController v = new ValidatorController();
 				Result r = v.doSentenceValidation(prj);
 				r.setProjectCode(prj);
@@ -246,7 +246,7 @@ public class ValidatorControllerTest {
 	public void doOneScenarioValidationTest()
 	{
 		String prj = "SKP";
-		String uc = "SKP05";
+		String uc = "SKP06";
 		ArrayList<Result> resultList = new ArrayList<Result>();
 				
 		ValidatorController v = new ValidatorController();

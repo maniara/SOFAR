@@ -157,7 +157,9 @@ public class ActionFlowGraphGenerator {
 		
 		for(AFGEdge e : graph.getEdgeList())
 		{
-			if(e.getOccurrencesByMax() < Thresholds.Allowance_Occurences_By_Max || e.getRelatedInterconectivity() < Thresholds.Allowance_RI)
+			//if(e.getFromNode().getSubjectType().equals("s") && e.getFromNode().getRepVerb().equals("modify") && e.getToNode().getSubjectType().equals("s") && e.getToNode().getRepVerb().equals("display"))
+				//System.out.print("");
+			if(e.getOccurrencesByMax() < Thresholds.Graph_Verb_Occr_Criteria || e.getRelatedInterconectivity() < Thresholds.Graph_Min_RI)
 				remTarget.add(e);
 		}	
 		
