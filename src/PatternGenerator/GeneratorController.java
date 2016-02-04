@@ -204,8 +204,6 @@ public class GeneratorController {
 		ArrayList<PatternFragment> filtered =new ArrayList<PatternFragment>();
 		for(PatternFragment pf : this.pfSet)
 		{
-			if(pf.toString().contains("u:insert-u:request-s:modify-s:display"))
-				System.out.print("");
 			if(graph.hasPattern(pf.getVerbList()))
 			{
 				double weight = graph.calculateTotalWeight(pf.getVerbList());

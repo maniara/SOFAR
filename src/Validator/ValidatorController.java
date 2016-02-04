@@ -29,18 +29,37 @@ public class ValidatorController {
 	
 	public Result doSentenceValidation(String targetProjectId){
 		this.targetProjectId = targetProjectId;
-		getVerbCluster(targetProjectId);
+		getVerbCluster(targetProjectId,true);
+		getFlowGraph(targetProjectId);
+		getPatterns(targetProjectId);
+		getTargetProject(targetProjectId);
+		return validate();
+	}
+	
+	public Result doNoExceptValidation(String targetProjectId){
+		this.targetProjectId = targetProjectId;
+		getVerbCluster(targetProjectId,false);
 		getFlowGraph();
 		getPatterns();
 		getTargetProject(targetProjectId);
 		return validate();
 	}
 	
-	public Result doOneScenarioValidation(String targetProjectId, String ucId){
+	public Result doCompleteScenarioValidation(String targetProjectId)
+	{
 		this.targetProjectId = targetProjectId;
-		getVerbCluster(targetProjectId);
+		getVerbCluster(targetProjectId,false);
 		getFlowGraph();
 		getPatterns();
+		getTargetProject(targetProjectId);
+		return validateCompleteScenario();
+	}
+	
+	public Result doOneScenarioValidation(String targetProjectId, String ucId){
+		this.targetProjectId = targetProjectId;
+		getVerbCluster(targetProjectId,true);
+		getFlowGraph(targetProjectId);
+		getPatterns(targetProjectId);
 		getTargetScenario(targetProjectId,ucId);
 		return validate();
 	}
@@ -59,16 +78,6 @@ public class ValidatorController {
 			}
 		}
 	}
-	
-	public Result doSentenceValidationNoOmit(String targetProjectId)
-	{
-		this.targetProjectId = targetProjectId;
-		getVerbCluster(targetProjectId);
-		getFlowGraph();
-		getPatterns();
-		getTargetProject(targetProjectId);
-		return validateNoOmit();
-	}
 
 	private void getTargetProject(String targetProjectId) {
 		UseCaseAccessor ua = new UseCaseAccessor();
@@ -77,7 +86,7 @@ public class ValidatorController {
 		
 	}
 	
-	private Result validateNoOmit(){
+	private Result validateCompleteScenario(){
 		int totalTry = 0;
 		int correct = 0;
 
@@ -182,12 +191,21 @@ public class ValidatorController {
 		afg.makeActionFlowGraph();
 		flowGraph = afg.getGraph();
 		//afg.drawGraph();
-		
+	}
+	
+	private void getFlowGraph(String exceptedProjectID) {
+		ActionFlowGraphGenerator afg = new ActionFlowGraphGenerator(clusterList, exceptedProjectID);
+		afg.makeActionFlowGraph();
+		flowGraph = afg.getGraph();
+		//afg.drawGraph();
 	}
 
-	private void getVerbCluster(String targetProjectId) {
+	private void getVerbCluster(String targetProjectId, Boolean withExcept) {
 		Generator vcGen = new Generator();
-		clusterList = vcGen.makeVerbClusterForValidation(targetProjectId);
+		if(withExcept)
+			clusterList = vcGen.makeVerbClusterForValidation(targetProjectId);
+		else
+			clusterList = vcGen.makeVerbClusterForValidation("");
 		//clusterList = vcGen.makeVerbCluster();
 		//System.out.println(clusterList.size());
 		System.out.println("--- "+clusterList.size()+" cluster generated (SAMPLE-"+clusterList.get(0)+") ---");
@@ -197,7 +215,19 @@ public class ValidatorController {
 	private void getPatterns()
 	{
 		GeneratorController cont = new GeneratorController(flowGraph);
-		patterns = cont.makePatterns(true, targetProjectId);
+		patterns = cont.makePatterns(false, "");
+		for(PatternFragment pf : patterns)
+		{
+			if(pf != null)
+				System.out.println(pf);
+		}
+		System.out.println("--- "+patterns.size()+" patterns generated ---");
+	}
+	
+	private void getPatterns(String exceptedProjectID)
+	{
+		GeneratorController cont = new GeneratorController(flowGraph);
+		patterns = cont.makePatterns(true, exceptedProjectID);
 		for(PatternFragment pf : patterns)
 		{
 			if(pf != null)

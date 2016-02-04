@@ -117,14 +117,28 @@ public class UseCaseAccessor {
 		return UCList;
 	}
 	
+	public ArrayList<UseCase> getExceptedTrainingUseCaseList(String projectID)
+	{
+		String query = "";
+		query = "SELECT * FROM "+DataAccessString.dbName+".training_use_case where projectID != '"+projectID+"'";
+		return getTraningUserCaseList(query);
+	}
+	
 	public ArrayList<UseCase> getAllTrainingUseCaseList()
+	{
+		String query = "";
+		query = "SELECT * FROM "+DataAccessString.dbName+".training_use_case";
+		return getTraningUserCaseList(query);
+	}
+	
+	private ArrayList<UseCase> getTraningUserCaseList(String query)
 	{
 		ArrayList<UseCase> UCList = new ArrayList<UseCase>();
 		FlowAccessor fa = new FlowAccessor();
 		
 		Statement stmt = null;
 		ResultSet rs = null;
-		String query = "SELECT * FROM "+DataAccessString.dbName+".training_use_case";
+		
 		//System.out.println(query);
 		
 		try{

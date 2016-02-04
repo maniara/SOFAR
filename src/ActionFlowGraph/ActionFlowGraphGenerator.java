@@ -34,6 +34,13 @@ public class ActionFlowGraphGenerator {
 		clusterList = clusters;
 	}
 	
+	public ActionFlowGraphGenerator(ArrayList<VerbCluster> clusters, String exceptedProjectID)
+	{
+		useCaseList = new UseCaseAccessor().getExceptedTrainingUseCaseList(exceptedProjectID);
+		//System.out.println(useCaseList.size());
+		clusterList = clusters;
+	}
+	
 	public void makeActionFlowGraph()
 	{
 		System.out.println("=== Graph Generating ===");
