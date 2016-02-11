@@ -21,7 +21,7 @@ public class GeneratorControllerTest {
 		ActionFlowGraph flowGraph = afg.getGraph();
 		//afg.drawGraph();
 		
-		GeneratorController cont = new GeneratorController(flowGraph);
+		PatternGeneratorController cont = new PatternGeneratorController(flowGraph);
 		PatternFragmentSet patterns = cont.makePatterns(true, targetProject);
 		
 		for(PatternFragment pf : patterns)

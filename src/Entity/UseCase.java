@@ -36,6 +36,16 @@ public class UseCase {
 		return null;
 	}
 	
+	public Sentence getBasicFlowSentence(int seq)
+	{
+		for(Sentence sen : this.getBasicFlowSentences())
+		{
+			if(sen.getSentenceSeq() == seq)
+				return sen;
+		}
+		return null;
+	}
+	
 	public void setFlowList(ArrayList<Flow> flowList)
 	{
 		this.flowList = flowList;
@@ -103,6 +113,21 @@ public class UseCase {
 
 	public String getActor() {
 		return actor;
+	}
+
+	public void addStartNode() {
+		Sentence fistSen = this.getBasicFlowSentences().get(0);
+		Sentence startSentence = new Sentence(fistSen.getProjectID(), fistSen.getUseCaseID(), fistSen.getFlowID(), "0", "Scnario Start", 's', 0, false, false);
+		startSentence.setVerb("ScenarioStart");
+		startSentence.setRepresentVerb("ScenarioStart");
+		for(Flow f:this.flowList)
+		{
+			if(!f.getIsAlternative())
+			{
+				f.getSentenceList().add(startSentence);
+				break;
+			}
+		}
 	} 
 	
 }

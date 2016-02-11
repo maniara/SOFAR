@@ -21,7 +21,8 @@ import MySQLDataAccess.PatternAccessor;
 import MySQLDataAccess.SentenceAccessor;
 import MySQLDataAccess.VerbClusterAccessor;
 import MySQLDataAccess.VerbFrequencyAccessor;
-import PatternGenerator.GeneratorController;
+import PatternGenerator.PatternGeneratorController;
+import PatternGenerator.PatternSetInstance;
 import PatternGenerator.CoOccurenceProb;
 import PatternGenerator.PatternFragmentSet;
 import Recommender.MainVerbExtractor;
@@ -34,13 +35,13 @@ import PatternGenerator.PatternTreeViewer;
 
 import org.eclipse.swt.events.SelectionAdapter;
 
-public class PatternGeneratorController {
+public class PatternGenerator {
 	
 	protected Shell shell;
 	private Label label;
 	private ActionFlowGraphGenerator afg;
 
-	public PatternGeneratorController()
+	public PatternGenerator()
 	{
 		shell = new Shell();
 		shell.setSize(430, 400);
@@ -227,9 +228,9 @@ public class PatternGeneratorController {
 			afg = new ActionFlowGraphGenerator();
 			afg.makeActionFlowGraph();
 		}
-		GeneratorController cont = new GeneratorController(afg.getGraph());
+		PatternGeneratorController cont = new PatternGeneratorController(afg.getGraph());
 		
-		PatternGenerator.PatternSetInstance.PatternSet = cont.makePatterns(false, null);
+		PatternSetInstance.PatternSet = cont.makePatterns(false, null);
 		
 		System.out.println("=== Patterns Extracted ===");
 	}
@@ -238,22 +239,6 @@ public class PatternGeneratorController {
 	{
 		new PatternTreeViewer().draw();
 	}
-	
-	private void analyzeCurrentOccurence()
-	{
-		ArrayList<CoOccurenceProb> occurenceList  = new GeneratorController(afg.getGraph()).getCoOccurenceTable();
-				
-		for(CoOccurenceProb cop : occurenceList)
-		{
-			if(afg.getGraph().getEdgeStringList().contains(cop.verb1) && afg.getGraph().getEdgeStringList().contains(cop.verb2))
-			{
-				if(cop.getCoOccurProb() > Thresholds.CoOccur_Threshold)
-					System.out.println(cop.toString()+"|"+cop.coOccurProb);
-			}
-			
-		}
-	}
-	
 	
 	/*private void makeSynonymBasedCluster()
 	{

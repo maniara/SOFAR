@@ -13,12 +13,32 @@ public class ValidatorControllerTest {
 		prjList.add("COS");
 		prjList.add("META");
 		prjList.add("UIS");
+		prjList.add("PAY");
 		return prjList;
 	}
 	
 	private ArrayList<String> getAcademicProjectList()
 	{
 		ArrayList<String> prjList = new ArrayList<String>();
+
+		prjList.add("ATM");
+		prjList.add("OSS");
+		prjList.add("PRS");
+		prjList.add("POS");
+		prjList.add("TMS");
+		prjList.add("EFF");
+		prjList.add("OPS");
+		return prjList;
+	}
+	
+	private ArrayList<String> getAllProjectList()
+	{
+		ArrayList<String> prjList = new ArrayList<String>();
+		prjList.add("SKP");
+		prjList.add("COS");
+		prjList.add("META");
+		prjList.add("UIS");
+		prjList.add("PAY");
 		prjList.add("ATM");
 		prjList.add("OSS");
 		prjList.add("PRS");
@@ -47,7 +67,7 @@ public class ValidatorControllerTest {
 	@Test
 	public void doWholeValidation()
 	{
-		ArrayList<String> prjList = this.getIndustryProjectList();
+		ArrayList<String> prjList = this.getAllProjectList();
 		ArrayList<Result> resultList = new ArrayList<Result>();
 				
 		//Thresholds.Weight_Of_Scenario_Similarity_EQUALITY_PATTERNSCORE = {0.2,0.8};
@@ -63,7 +83,7 @@ public class ValidatorControllerTest {
 	@Test
 	public void doNoExceptValidation()
 	{
-		ArrayList<String> prjList = this.getIndustryProjectList();
+		ArrayList<String> prjList = this.getAllProjectList();
 		ArrayList<Result> resultList = new ArrayList<Result>();
 				
 		//Thresholds.Weight_Of_Scenario_Similarity_EQUALITY_PATTERNSCORE = {0.2,0.8};
@@ -97,7 +117,7 @@ public class ValidatorControllerTest {
 	@Test
 	public void doOneProjectValidation()
 	{
-		String prj = "SKP";
+		String prj = "PAY";
 		ArrayList<Result> resultList = new ArrayList<Result>();
 				
 		ValidatorController v = new ValidatorController();
@@ -111,7 +131,7 @@ public class ValidatorControllerTest {
 	public void doOneScenarioValidation()
 	{
 		String prj = "SKP";
-		String uc = "SKP06";
+		String uc = "SKP01";
 		ArrayList<Result> resultList = new ArrayList<Result>();
 				
 		ValidatorController v = new ValidatorController();

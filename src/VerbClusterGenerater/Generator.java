@@ -30,7 +30,7 @@ public class Generator {
 	public ArrayList<VerbCluster> makeVerbCluster(){
 		SentenceAccessor sa = new SentenceAccessor();
 		ArrayList<Sentence> sentenceList = sa.getAllTrainingSentenceList();
-		return performGenerator(sentenceList,false);
+		return performGenerator(sentenceList,true);
 	}
 	
 	private ArrayList<VerbCluster> performGenerator(ArrayList<Sentence> sentenceList, boolean needSave){

@@ -13,7 +13,7 @@ import MissedActionFinder.MissedAction;
 import MySQLDataAccess.ProjectAccessor;
 import MySQLDataAccess.SentenceAccessor;
 import MySQLDataAccess.UseCaseAccessor;
-import PatternGenerator.GeneratorController;
+import PatternGenerator.PatternGeneratorController;
 import PatternGenerator.PatternFragment;
 import PatternGenerator.PatternFragmentSet;
 import VerbClusterGenerater.Generator;
@@ -113,6 +113,7 @@ public class ValidatorController {
 	}
 
 	private Result validate() {
+		System.out.println("Try;UCID;Origin;MissedAction;Input;MissedRoute;Result;Extracted;Found");
 		int totalTry = 0;
 		int correct = 0;
 		int incorrect = 0;
@@ -123,12 +124,6 @@ public class ValidatorController {
 			ArrayList<Sentence> originSentenceList = new SentenceAccessor().getBasicFlowSentenceList(uc.getProjectID(), uc.getUseCaseID());
 			ActionFinderController afc = new ActionFinderController(patterns,clusterList);
 			afc.findRepresentiveVerb(originSentenceList);
-			System.out.print("Original Scenario : ");
-			for(Sentence sen : originSentenceList)
-			{
-				System.out.print(sen.getSentenceType()+":"+sen.getRepresentVerb()+"-");
-			}
-			System.out.println("");
 //			
 			for(int i=0;i<originSentenceList.size();i++){
 				boolean findThisTry = false; 
@@ -138,29 +133,40 @@ public class ValidatorController {
 				Sentence removedSentence = originSentenceList.get(i);
 				ArrayList<Sentence> sentenceList = new ArrayList<Sentence>(originSentenceList);
 				sentenceList.remove(i);
-				System.out.println("-----"+uc.getUseCaseID()+"-----");
-				System.out.println("'"+removedSentence.getVerb()+"'("+removedSentence.getSentenceOrder()+") is removed");
-				//System.out.print("Input Scenario : ");
-				System.out.print("Try "+totalTry+"/");
+
+				//print result part 1
+				System.out.print(totalTry+";"+uc.getUseCaseID()+";");
+				for(Sentence sen : originSentenceList)
+				{
+					System.out.print(sen.getSentenceType()+":"+sen.getRepresentVerb()+"-");
+				}
+				System.out.print(";"+removedSentence.getVerb()+"("+removedSentence.getSentenceOrder()+");");
+				
 				for(Sentence sen : sentenceList)
 				{
 					System.out.print(sen.getSentenceType()+":"+sen.getRepresentVerb()+"-");
 				}
-				System.out.println("");
-				if(totalTry == 2)
-					System.out.print("");
+				System.out.print(";");
+				//end of print
+
 				ArrayList<MissedAction> missedActionMap = afc.findMissedAction(sentenceList,true);
-				System.out.println(missedActionMap);
+				System.out.print(missedActionMap+";");
 				
+				
+				int extedOfMA = 0;
+				String MAString = "";
 				for(MissedAction ma : missedActionMap)
 				{
 					allExtracted++;
+					extedOfMA++;
 					String removedAction = removedSentence.getVerbString();
+					//String beforeAction = "";
 					int removedActionNum = Integer.parseInt(removedSentence.getSentenceOrder());
 
 					String missedAction = ma.getActionString();
-					int MissedPrevAction = ma.getPrevSequence();
-					System.out.println("REM: "+removedAction+"("+removedActionNum +"), GOT: "+missedAction +"("+(MissedPrevAction+1)+")");
+					//String missedBeforeAction = ma.beforeSentence().toString();
+					int MissedPrevAction = ma.prevIndexOfMissed();
+					//System.out.println("REM: "+removedAction+"("+removedActionNum +"), GOT: "+missedAction +"("+(MissedPrevAction+1)+")");
 					
 					if(removedAction.equals(missedAction) && removedActionNum == MissedPrevAction+1){
 					//if(removedAction.equals(missedAction)){
@@ -168,11 +174,14 @@ public class ValidatorController {
 						findThisTry = true;
 					}
 					else{
-						System.out.println();
+						//System.out.println();
 						incorrect++;
 					}
 				}
-				System.out.println("Result : " + findThisTry);
+				//System.out.println("Result : " + findThisTry);
+				
+
+				System.out.println(extedOfMA+";"+findThisTry);
 				
 				
 			}
@@ -214,7 +223,7 @@ public class ValidatorController {
 	
 	private void getPatterns()
 	{
-		GeneratorController cont = new GeneratorController(flowGraph);
+		PatternGeneratorController cont = new PatternGeneratorController(flowGraph);
 		patterns = cont.makePatterns(false, "");
 		for(PatternFragment pf : patterns)
 		{
@@ -226,7 +235,7 @@ public class ValidatorController {
 	
 	private void getPatterns(String exceptedProjectID)
 	{
-		GeneratorController cont = new GeneratorController(flowGraph);
+		PatternGeneratorController cont = new PatternGeneratorController(flowGraph);
 		patterns = cont.makePatterns(true, exceptedProjectID);
 		for(PatternFragment pf : patterns)
 		{

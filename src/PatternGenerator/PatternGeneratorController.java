@@ -15,7 +15,7 @@ import MySQLDataAccess.SentenceAccessor;
 import MySQLDataAccess.VerbClusterAccessor;
 import ToolSettings.Thresholds;
 
-public class GeneratorController {
+public class PatternGeneratorController {
 	
 
 	private HashMap<String, HashSet<String>> flowIdInVerb;
@@ -25,7 +25,7 @@ public class GeneratorController {
 	private ActionFlowGraph graph;
 	private HashMap<String, Integer> verbCount;
 	
-	public GeneratorController(ActionFlowGraph graph)
+	public PatternGeneratorController(ActionFlowGraph graph)
 	{
 		this.graph = graph;
 	}
@@ -38,6 +38,12 @@ public class GeneratorController {
 			flowList = fa.getAllBasicFlowListForValidate(projectId);
 		else
 			flowList = fa.getAllBasicFlowList();
+		
+		for(Flow f : flowList){
+			if(f.getIsAlternative() == false)
+				f.addStartNode();
+		}
+			
 		verbCount = new HashMap<String, Integer>();
 		
 		VerbClusterAccessor vca = new VerbClusterAccessor();
@@ -48,6 +54,8 @@ public class GeneratorController {
 		{
 			for(Sentence sen : f.getSentenceList())
 			{
+				if(sen.getSentenceSeq() == 0)
+					continue;
 				for(VerbCluster vc : clusters)
 				{
 					if(vc.getSubjectType().equals(sen.getSentenceType()+""))
@@ -93,7 +101,7 @@ public class GeneratorController {
 		filteringDuplicated();
 		calculateWeight();
 		setRepVerbOfPattern();
-		printPFSet();
+		//printPFSet();
 
 		
 		/*for(PatternFragment pf : pfSet)
@@ -245,10 +253,9 @@ public class GeneratorController {
 		
 		for(String v : verbCount.keySet())
 		{
-			if(v.equals("s:modify"))
-				System.out.print("");
 			if(!graph.getEdgeStringList().contains(v))
 			{
+				System.out.println(graph.getEdgeStringList());
 				remList.add(v);
 			}
 		}
@@ -266,26 +273,24 @@ public class GeneratorController {
 		pfSet = new PatternFragmentSet();
 		for(String v : verbCount.keySet())
 		{
+			if(v.equals("s:ScenarioStart"))
+				System.out.print("");
 			for(Flow f: this.flowList)
 			{
 				for(int i=0;i<f.getSentenceList().size()-1;i++)
 				{
-					Sentence sen = f.getSentenceList().get(i);
+					Sentence sen = f.getSentenceBySeq(i);
 					if(sen.getVerbString().equals(v))
 					{
 
 						//there is a sentence that has same verb in graph
-						Sentence nextSen = f.getSentenceList().get(i+1);
+						Sentence nextSen = f.getSentenceBySeq(i+1);
 						String fragString = sen.getVerbString()+"-"+nextSen.getVerbString();
-						
-						if(fragString.equals("s:modify-s:display"))
-							System.out.print("");
-						
+
 						if(pfSet.containVerbString(fragString))
 						{
 							PatternFragment pf = pfSet.getPatternFragment(fragString);
 							pf.addConditionalOccrCount();
-									
 						}
 						else
 						{
@@ -313,6 +318,9 @@ public class GeneratorController {
 		while(!pfStack.empty())
 		{
 			PatternFragment can = pfStack.pop();
+			if(can.toString().contains("Start"))
+				System.out.print("");
+			
 			for(Flow f : this.flowList)
 			{
 				if(hasMatchedAction(f,can))
@@ -348,7 +356,7 @@ public class GeneratorController {
 	private boolean hasMatchedAction(Flow f, PatternFragment can) {
 		for(int i=0;i<f.getSentenceList().size();i++)
 		{
-			Sentence s = f.getSentenceList().get(i);
+			Sentence s = f.getSentenceBySeq(i);
 			if(s.getVerbString().equals(can.getPrevRepVerbs().get(0)))
 			{
 				for(int j=1;j<can.getVerbList().size();j++)
@@ -356,7 +364,7 @@ public class GeneratorController {
 					if(i+j >= f.getSentenceList().size())
 						break;
 					
-					if(f.getSentenceList().get(i+j).getVerbString().equals(can.getVerbList().get(j)))
+					if(f.getSentenceBySeq(i+j).getVerbString().equals(can.getVerbList().get(j)))
 					{
 						if(j==can.getVerbList().size()-1)
 						{
@@ -378,20 +386,11 @@ public class GeneratorController {
 	
 	private ArrayList<String> getNextVerbString(Flow f, PatternFragment can)
 	{
-		//DEBUG
-//		System.out.println("====");
-//		for(Sentence s : f.getSentenceList())
-//			System.out.println(s.getVerbString());
-//		System.out.println("----");
-//		for(String s : can.getVerbList())
-//			System.out.println(s);
-		//END of DEBUG
-		
 		ArrayList<String> retList = new ArrayList<String>();
 		
 		for(int i=0;i<f.getSentenceList().size();i++)
 		{
-			Sentence s = f.getSentenceList().get(i);
+			Sentence s = f.getSentenceBySeq(i);
 			if(s.getVerbString().equals(can.getPrevRepVerbs().get(0)))
 			{
 				//for(int j=1;j<can.getVerbList().size();j++)
@@ -406,12 +405,12 @@ public class GeneratorController {
 					{
 						if(j == can.getVerbList().size())
 						{
-							retList.add(f.getSentenceList().get(i+j).getVerbString());
+							retList.add(f.getSentenceBySeq(i+j).getVerbString());
 							break;
 						}
 						else
 						{
-							if(f.getSentenceList().get(i+j).getVerbString().equals(can.getVerbList().get(j)))
+							if(f.getSentenceBySeq(i+j).getVerbString().equals(can.getVerbList().get(j)))
 							{
 								j++;
 								continue;

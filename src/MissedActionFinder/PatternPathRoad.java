@@ -3,6 +3,7 @@ package MissedActionFinder;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import Entity.Sentence;
 import PatternGenerator.PatternFragment;
 
 public class PatternPathRoad {
@@ -14,9 +15,12 @@ public class PatternPathRoad {
 	private double equalityScore;
 	private boolean hasMissed;
 	private ArrayList<MissedAction> missedActionList;
+	private ArrayList<Sentence> target;
+	
 
-	public PatternPathRoad(int from, int to, double weight, PatternFragment matchedPattern) {
+	public PatternPathRoad(int from, int to, double weight, PatternFragment matchedPattern, ArrayList<Sentence> target) {
 		super();
+		this.target = target;
 		this.from = from;
 		this.to = to;
 		this.weight = weight;
@@ -26,8 +30,12 @@ public class PatternPathRoad {
 			hasMissed = false;
 		else if(to-from == matchedPattern.getVerbList().size())
 			hasMissed = false;
+		else if(matchedPattern.getPrevRepVerbs().get(0).equals("EMPTY"))
+			hasMissed = false;
 		else
 			hasMissed = true;
+		
+
 		
 		if(hasMissed)
 			missedActionList = new ArrayList<MissedAction>();
@@ -59,7 +67,7 @@ public class PatternPathRoad {
 	public String toString()
 	{
 		if(matchedPattern != null)
-			return from+"=>"+to+"/"+this.matchedPattern.toString();
+			return "["+this.hasMissed+"]"+from+"=>"+to+"/"+target+"/"+this.matchedPattern.toString();
 		else
 			return from+"=>"+to+"/EMPTY";
 	}
@@ -81,7 +89,15 @@ public class PatternPathRoad {
 	}
 
 	public ArrayList<MissedAction> getMissedActionMap() {
-		return missedActionList;
+		ArrayList<MissedAction> retList = new ArrayList<MissedAction>();
+		for(MissedAction ma:missedActionList)
+		{
+			if(!ma.getActionString().contains("ScenarioStart"))
+				retList.add(ma);
+				
+		}
+		
+		return retList;
 	}
 
 	public void setMissedActionMap(ArrayList<MissedAction> missedActionMap) {

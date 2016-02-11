@@ -1,6 +1,7 @@
 package MissedActionFinder;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 
 import Entity.Flow;
@@ -20,6 +21,7 @@ public class ActionFinderController {
 	private PatternFragmentSet patternSet;
 	private HashMap<String, String> userCluster;
 	private HashMap<String, String> systemCluster;
+	private ArrayList<Sentence> wholeSentenceList;
 	
 	public ActionFinderController(){
 		super();
@@ -46,6 +48,16 @@ public class ActionFinderController {
 	
 	public ArrayList<MissedAction> findMissedAction(ArrayList<Sentence> sentenceList, boolean forValidation)
 	{
+		this.wholeSentenceList = sentenceList;
+		//add start node
+		Sentence fistSen = sentenceList.get(0);
+		Sentence startSentence = new Sentence(fistSen.getProjectID(), fistSen.getUseCaseID(), fistSen.getFlowID(), "0", "Scnario Start", 's', 0, false, false);
+		startSentence.setVerb("ScenarioStart");
+		startSentence.setRepresentVerb("ScenarioStart");
+		sentenceList.add(startSentence);
+		
+		Collections.sort(sentenceList);
+		
 		ArrayList<MissedAction> missedAction = new ArrayList<MissedAction>(); 
 
 		if(this.patternSet == null)
@@ -56,23 +68,23 @@ public class ActionFinderController {
 		ArrayList<PatternPathRoad> roadList = drawPatternPath(sentenceList);
 		ArrayList<PatternPathRoad> optimalRoute = OptimalRouteGenerator.getOptimalRoute(sentenceList.size(),roadList);
 		
-		System.out.print("Optimal Pattern : ");
 		for(PatternPathRoad pp : optimalRoute)
 		{
-			System.out.println(pp.toString()+"/"+pp.getEqualityScore()+"/"+pp.getPatternScore()+"/"+pp.getWeight());
+			System.out.print(pp.toString()+"/"+pp.getEqualityScore()+"/"+pp.getPatternScore()+"/"+pp.getWeight()+"|");
 			if(pp.hasMissed())
 			{
 				/*for(MissedAction ma :pp.getMissedActionMap()){
 					System.out.println(ma);
 				}*/
 				missedAction.addAll(pp.getMissedActionMap());
+				
 			}
 		}
-		
+		System.out.print(";");
 		return missedAction;
 
 	}
-
+	
 	private void checkAndLoadVerbCluster() {
 		// TODO Auto-generated method stub
 		userCluster = new HashMap<String, String>();
@@ -210,8 +222,6 @@ public class ActionFinderController {
 			{
 				for(PatternFragment pf : patternSet)
 				{
-					if(pf.toString().equals("u:request-s:save-s:display"))
-						System.out.print("");
 					//if pattern is larger, the step is discard
 					if(i+1 > pf.getVerbList().size())
 						continue;
@@ -236,7 +246,9 @@ public class ActionFinderController {
 		}
 		for(int i = 0;i<sentenceList.size();i++)
 		{
-			roadList.add(new PatternPathRoad(i,i+1,0.0,new PatternFragment("EMPTY")));
+			ArrayList<Sentence> oneList = new ArrayList<Sentence>();
+			oneList.add(sentenceList.get(i));
+			roadList.add(new PatternPathRoad(i,i+1,0.0,new PatternFragment("EMPTY"),oneList));
 		}
 		
 		/*for(PatternPathRoad pp:roadList)
@@ -286,7 +298,8 @@ public class ActionFinderController {
 		System.out.println("");
 	}
 
-	private MissedAction getMissedActionObject(int prev,String prevSequenceString,int index,String patternString)
+	private MissedAction getMissedActionObject(int prev, String prevSequenceString, int index, String patternString,
+			PatternFragment pf, ArrayList<Sentence> targetSentences)
 	{
 		String[] sArr = patternString.split(":");
 		String sub = "";
@@ -295,18 +308,21 @@ public class ActionFinderController {
 		else
 			sub = "user";
 		String verb = sArr[1];
-		return new MissedAction(prev,prevSequenceString, index, sub, verb);
+		return new MissedAction(index, sub, verb, pf, targetSentences,wholeSentenceList);
 		
 	}
 	
 	public PatternPathRoad getPatternRoadWithSimilarity(int from, int to,ArrayList<Sentence> target, PatternFragment pf)
 	{
+		if(target.size()+1<pf.getVerbList().size())
+			return null;
 		//debug
 //		System.out.print("Target : ");
 //		printSentenceList(target);
 //		System.out.print("Pattern : ");
 //		System.out.println(pf);
 		//it assume that no omission in pattern.
+
 		int i=0; //pattern index
 		int j=0; //target index
 		int matched = 0;
@@ -335,7 +351,7 @@ public class ActionFinderController {
 				else
 					prevSentenceString = target.get(j-1).getSentenceType()+":"+target.get(j-1).getRepresentVerb();
 				
-				missedAction.add(getMissedActionObject(from + j, prevSentenceString, from +j+i,patternString));
+				missedAction.add(getMissedActionObject(from + j, prevSentenceString, i,patternString,pf,target));
 				i++;
 			}
 			
@@ -351,7 +367,7 @@ public class ActionFinderController {
 				for(int k=i;k<pf.getVerbList().size();k++)
 				{
 					String lastPatternString = pf.getVerbList().get(k);
-					missedAction.add(getMissedActionObject(from + j, prevSentenceString, from + j+k-1,lastPatternString));
+					missedAction.add(getMissedActionObject(from + j, prevSentenceString, i,lastPatternString,pf,target));
 				}
 			}
 			//target finished and pattern finished : no issue here
@@ -368,7 +384,12 @@ public class ActionFinderController {
 			System.out.println("Matched:" + matched);
 //		}*/
 //		System.out.println("Matched:" + matched);
-		double equalRate =(double) (matched*2) / (pf.getVerbList().size()+target.size());
+		//Calculating EqualRate (Perfectly matched : 1.0 ,Not : matched / all nodes) 
+		double equalRate = 0.0;
+		if((matched*2) == (pf.getVerbList().size()+target.size()))
+			equalRate = 1.0;
+		else
+			equalRate = (double) (matched)/(pf.getVerbList().size()+target.size());
 		double weight = 0.0;
 		PatternPathRoad road;
 		if(equalRate >= Thresholds.Matched_Pattern_Min_Equal_Rate)
@@ -383,14 +404,14 @@ public class ActionFinderController {
 			weight =  Thresholds.Weight_Of_Scenario_Similarity_EQUALITY_PATTERNSCORE[0]*equalRate 
 					+ Thresholds.Weight_Of_Scenario_Similarity_EQUALITY_PATTERNSCORE[1]*pf.getAdjustedWeight();
 			
-			road = new PatternPathRoad(from,to,weight,pf);
+			road = new PatternPathRoad(from,to,weight,pf,target);
 			road.setEqualityScore(equalRate);
 			road.setPatternScore(pf.getAdjustedWeight());
 			if(road.hasMissed())
 				road.setMissedActionMap(missedAction);
 		}
 		else{
-			road = new PatternPathRoad(from,to,weight,pf);
+			road = new PatternPathRoad(from,to,weight,pf,target);
 			weight =  0.0;
 			if(road.hasMissed())
 				road.setMissedActionMap(missedAction);

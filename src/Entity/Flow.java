@@ -117,4 +117,22 @@ public class Flow {
 		SentenceAccessor sa = new SentenceAccessor();
 		this.sentenceList=sa.getSentenceList(this.projectID, this.usecaseID, this.flowID);
 	}
+	
+	public void addStartNode()
+	{
+		Sentence fistSen = this.getSentenceList().get(0);
+		Sentence startSentence = new Sentence(fistSen.getProjectID(), fistSen.getUseCaseID(), fistSen.getFlowID(), "0", "Scnario Start", 's', 0, false, false);
+		startSentence.setVerb("ScenarioStart");
+		startSentence.setRepresentVerb("ScenarioStart");
+		
+		this.getSentenceList().add(startSentence);
+	}
+	
+	public Sentence getSentenceBySeq(int seq)
+	{
+		for(Sentence s: this.sentenceList)
+			if(s.getSentenceSeq() == seq)
+				return s;
+		return null;
+	}
 }

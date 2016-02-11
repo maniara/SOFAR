@@ -14,7 +14,7 @@ import org.eclipse.swt.widgets.Shell;
 import GUI.ProjectList;
 import GUI.ProjectMaker;
 import GUI.ValidateController;
-import GUI.PatternGeneratorController;
+import GUI.PatternGenerator;
 
 public class Sofar {
 	
@@ -106,7 +106,7 @@ public class Sofar {
 			@Override
 			public void widgetSelected(SelectionEvent arg0) 
 			{
-				new PatternGeneratorController();
+				new PatternGenerator();
 
 			}
 		});

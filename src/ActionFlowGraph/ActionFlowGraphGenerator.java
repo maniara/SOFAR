@@ -61,8 +61,14 @@ public class ActionFlowGraphGenerator {
 		{
 			for(int i=1;i<uc.getBasicFlowSentences().size();i++)
 			{
-				Sentence prev = uc.getBasicFlowSentences().get(i-1);
-				Sentence next = uc.getBasicFlowSentences().get(i);
+				Sentence prev = uc.getBasicFlowSentence(i-1);
+				Sentence next = uc.getBasicFlowSentence(i);
+				
+				if(next == null)
+				{
+					System.out.println(uc.getUseCaseID()+" has invalid sequence");
+					System.exit(0);
+				}
 				
 				AFGNode prevNode = this.graph.getNode(prev.getSentenceType()+"", prev.getRepresentVerb());
 				AFGNode nextNode = this.graph.getNode(next.getSentenceType()+"", next.getRepresentVerb());
@@ -166,7 +172,7 @@ public class ActionFlowGraphGenerator {
 		{
 			//if(e.getFromNode().getSubjectType().equals("s") && e.getFromNode().getRepVerb().equals("modify") && e.getToNode().getSubjectType().equals("s") && e.getToNode().getRepVerb().equals("display"))
 				//System.out.print("");
-			if(e.getOccurrencesByMax() < Thresholds.Graph_Verb_Occr_Criteria || e.getRelatedInterconectivity() < Thresholds.Graph_Min_RI)
+			if(e.getOccurrencesByMax() < Thresholds.Graph_Verb_Occr_Criteria && e.getRelatedInterconectivity() < Thresholds.Graph_Min_RI)
 				remTarget.add(e);
 		}	
 		
@@ -197,7 +203,10 @@ public class ActionFlowGraphGenerator {
 				//System.out.println(s.getSentenceContents());
 				if(s.getVerb() == null)
 					System.out.println("No main verb in "+ s.getSentenceContents());
-				s.setRepresentVerb(getRepresentiveVerb(s.getSentenceType()+"",s.getVerb()));
+				if(s.getSentenceSeq() == 0)
+					s.setRepresentVerb("ScenarioStart");
+				else
+					s.setRepresentVerb(getRepresentiveVerb(s.getSentenceType()+"",s.getVerb()));
 			}
 		}
 	}
@@ -223,4 +232,5 @@ public class ActionFlowGraphGenerator {
 		
 		return "";
 	}
+	
 }

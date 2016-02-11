@@ -121,17 +121,17 @@ public class UseCaseAccessor {
 	{
 		String query = "";
 		query = "SELECT * FROM "+DataAccessString.dbName+".training_use_case where projectID != '"+projectID+"'";
-		return getTraningUserCaseList(query);
+		return getTraningUseCaseList(query);
 	}
 	
 	public ArrayList<UseCase> getAllTrainingUseCaseList()
 	{
 		String query = "";
 		query = "SELECT * FROM "+DataAccessString.dbName+".training_use_case";
-		return getTraningUserCaseList(query);
+		return getTraningUseCaseList(query);
 	}
 	
-	private ArrayList<UseCase> getTraningUserCaseList(String query)
+	private ArrayList<UseCase> getTraningUseCaseList(String query)
 	{
 		ArrayList<UseCase> UCList = new ArrayList<UseCase>();
 		FlowAccessor fa = new FlowAccessor();
@@ -179,6 +179,12 @@ public class UseCaseAccessor {
 		}
 		catch(Exception ex) {ex.printStackTrace();}
 		//System.out.println(UCList.size());
+		
+		//add start node 
+		for(UseCase uc : UCList)
+		{
+			uc.addStartNode();
+		}
 		
 		return UCList;
 	}
