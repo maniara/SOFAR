@@ -52,7 +52,7 @@ public class MissedAction{// implements Comparable {
 	@Override
 	public String toString()
 	{
-		return "'"+subject+" "+verb+"'(next to "+this.beforeSentence()+"["+this.prevIndexOfMissed()+"]) is missed";
+		return subject+" "+verb+"(next to "+this.beforeSentence()+"["+this.prevIndexOfMissed()+"]) is missed";
 	}
 	
 	public int getMissedActionSeq()

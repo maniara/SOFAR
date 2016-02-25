@@ -22,6 +22,7 @@ public class ActionFinderController {
 	private HashMap<String, String> userCluster;
 	private HashMap<String, String> systemCluster;
 	private ArrayList<Sentence> wholeSentenceList;
+	public String extRoute = "";
 	
 	public ActionFinderController(){
 		super();
@@ -48,6 +49,7 @@ public class ActionFinderController {
 	
 	public ArrayList<MissedAction> findMissedAction(ArrayList<Sentence> sentenceList, boolean forValidation)
 	{
+		extRoute = "";
 		this.wholeSentenceList = sentenceList;
 		//add start node
 		Sentence fistSen = sentenceList.get(0);
@@ -71,6 +73,7 @@ public class ActionFinderController {
 		for(PatternPathRoad pp : optimalRoute)
 		{
 			System.out.print(pp.toString()+"/"+pp.getEqualityScore()+"/"+pp.getPatternScore()+"/"+pp.getWeight()+"|");
+			extRoute=extRoute+pp.toString()+"/"+pp.getEqualityScore()+"/"+pp.getPatternScore()+"/"+pp.getWeight()+"|";
 			if(pp.hasMissed())
 			{
 				/*for(MissedAction ma :pp.getMissedActionMap()){
@@ -81,6 +84,8 @@ public class ActionFinderController {
 			}
 		}
 		System.out.print(";");
+		extRoute = extRoute + ";";
+		
 		return missedAction;
 
 	}

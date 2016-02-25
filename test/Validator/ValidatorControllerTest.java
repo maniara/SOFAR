@@ -2,6 +2,8 @@ package Validator;
 
 import java.util.ArrayList;
 import org.junit.Test;
+
+import MySQLDataAccess.ValidationResultAccessor;
 import ToolSettings.Thresholds;
 
 public class ValidatorControllerTest {
@@ -67,13 +69,16 @@ public class ValidatorControllerTest {
 	@Test
 	public void doWholeValidation()
 	{
+		ValidationResultAccessor vra = new ValidationResultAccessor();
+		vra.deleteAllResult();
+
 		ArrayList<String> prjList = this.getAllProjectList();
 		ArrayList<Result> resultList = new ArrayList<Result>();
 				
 		//Thresholds.Weight_Of_Scenario_Similarity_EQUALITY_PATTERNSCORE = {0.2,0.8};
 		for(String prj : prjList){
 			ValidatorController v = new ValidatorController();
-			Result r = v.doSentenceValidation(prj);
+			Result r = v.doSentenceValidation(prj,true);
 			r.setProjectCode(prj);
 			resultList.add(r);
 		}
@@ -89,7 +94,7 @@ public class ValidatorControllerTest {
 		//Thresholds.Weight_Of_Scenario_Similarity_EQUALITY_PATTERNSCORE = {0.2,0.8};
 		for(String prj : prjList){
 			ValidatorController v = new ValidatorController();
-			Result r = v.doNoExceptValidation(prj);
+			Result r = v.doNoExceptValidation(prj,false);
 			r.setProjectCode(prj);
 			resultList.add(r);
 		}
@@ -117,11 +122,11 @@ public class ValidatorControllerTest {
 	@Test
 	public void doOneProjectValidation()
 	{
-		String prj = "PAY";
+		String prj = "OSS";
 		ArrayList<Result> resultList = new ArrayList<Result>();
 				
 		ValidatorController v = new ValidatorController();
-		Result r = v.doSentenceValidation(prj);
+		Result r = v.doSentenceValidation(prj,false);
 		r.setProjectCode(prj);
 		resultList.add(r);
 		printResult(resultList);
@@ -135,7 +140,7 @@ public class ValidatorControllerTest {
 		ArrayList<Result> resultList = new ArrayList<Result>();
 				
 		ValidatorController v = new ValidatorController();
-		Result r = v.doOneScenarioValidation(prj, uc);
+		Result r = v.doOneScenarioValidation(prj, uc,false);
 		r.setProjectCode(prj);
 		resultList.add(r);
 		printResult(resultList);

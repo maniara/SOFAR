@@ -13,6 +13,7 @@ import MissedActionFinder.MissedAction;
 import MySQLDataAccess.ProjectAccessor;
 import MySQLDataAccess.SentenceAccessor;
 import MySQLDataAccess.UseCaseAccessor;
+import MySQLDataAccess.ValidationResultAccessor;
 import PatternGenerator.PatternGeneratorController;
 import PatternGenerator.PatternFragment;
 import PatternGenerator.PatternFragmentSet;
@@ -27,22 +28,22 @@ public class ValidatorController {
 	private ArrayList<UseCase> targetProject;
 	//ArrayList<UseCase> randomRemovedTargetProject;
 	
-	public Result doSentenceValidation(String targetProjectId){
+	public Result doSentenceValidation(String targetProjectId, boolean dbStore){
 		this.targetProjectId = targetProjectId;
 		getVerbCluster(targetProjectId,true);
 		getFlowGraph(targetProjectId);
 		getPatterns(targetProjectId);
 		getTargetProject(targetProjectId);
-		return validate();
+		return validate(dbStore);
 	}
 	
-	public Result doNoExceptValidation(String targetProjectId){
+	public Result doNoExceptValidation(String targetProjectId, boolean dbStore){
 		this.targetProjectId = targetProjectId;
 		getVerbCluster(targetProjectId,false);
 		getFlowGraph();
 		getPatterns();
 		getTargetProject(targetProjectId);
-		return validate();
+		return validate(dbStore);
 	}
 	
 	public Result doCompleteScenarioValidation(String targetProjectId)
@@ -55,13 +56,13 @@ public class ValidatorController {
 		return validateCompleteScenario();
 	}
 	
-	public Result doOneScenarioValidation(String targetProjectId, String ucId){
+	public Result doOneScenarioValidation(String targetProjectId, String ucId, boolean dbStore){
 		this.targetProjectId = targetProjectId;
 		getVerbCluster(targetProjectId,true);
 		getFlowGraph(targetProjectId);
 		getPatterns(targetProjectId);
 		getTargetScenario(targetProjectId,ucId);
-		return validate();
+		return validate(dbStore);
 	}
 	
 	private void getTargetScenario(String targetProjectId,String ucId){
@@ -112,7 +113,9 @@ public class ValidatorController {
 		return new Result(totalTry,0,correct);
 	}
 
-	private Result validate() {
+	private Result validate(boolean dbStore) {
+		ValidationResultAccessor vra = new ValidationResultAccessor();
+		
 		System.out.println("Try;UCID;Origin;MissedAction;Input;MissedRoute;Result;Extracted;Found");
 		int totalTry = 0;
 		int correct = 0;
@@ -126,8 +129,11 @@ public class ValidatorController {
 			afc.findRepresentiveVerb(originSentenceList);
 //			
 			for(int i=0;i<originSentenceList.size();i++){
+				String insertString = "";
 				boolean findThisTry = false; 
 				totalTry++;
+				if(totalTry == 37)
+					System.out.print("");
 //				if(totalTry != 2)
 //					continue;
 				Sentence removedSentence = originSentenceList.get(i);
@@ -136,21 +142,28 @@ public class ValidatorController {
 
 				//print result part 1
 				System.out.print(totalTry+";"+uc.getUseCaseID()+";");
+				insertString = insertString + totalTry+";"+uc.getUseCaseID()+";"; 
 				for(Sentence sen : originSentenceList)
 				{
 					System.out.print(sen.getSentenceType()+":"+sen.getRepresentVerb()+"-");
+					insertString = insertString + sen.getSentenceType()+":"+sen.getRepresentVerb()+"-";
 				}
 				System.out.print(";"+removedSentence.getVerb()+"("+removedSentence.getSentenceOrder()+");");
+				insertString = insertString + ";"+removedSentence.getVerb()+";"+removedSentence.getSentenceOrder()+";";
 				
 				for(Sentence sen : sentenceList)
 				{
 					System.out.print(sen.getSentenceType()+":"+sen.getRepresentVerb()+"-");
+					insertString = insertString + sen.getSentenceType()+":"+sen.getRepresentVerb()+"-";
 				}
 				System.out.print(";");
+				insertString = insertString + ";";
 				//end of print
 
 				ArrayList<MissedAction> missedActionMap = afc.findMissedAction(sentenceList,true);
+				insertString = insertString + afc.extRoute;
 				System.out.print(missedActionMap+";");
+				insertString =  insertString + missedActionMap.toString() + ";";
 				
 				
 				int extedOfMA = 0;
@@ -182,8 +195,14 @@ public class ValidatorController {
 				
 
 				System.out.println(extedOfMA+";"+findThisTry);
+				insertString =  insertString + extedOfMA+";"+findThisTry+";";
+				if(findThisTry && extedOfMA == 1)
+					insertString = insertString + "TRUE";
+				else
+					insertString = insertString + "FALSE";
 				
-				
+				if(dbStore)
+					vra.addResult(insertString);
 			}
 
 		}

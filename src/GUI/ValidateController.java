@@ -53,7 +53,7 @@ public class ValidateController {
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {
 				ValidatorController vc =new ValidatorController();
-				vc.doSentenceValidation(targetProjectText.getText());
+				vc.doSentenceValidation(targetProjectText.getText(),false);
 			}});
 		
 	}

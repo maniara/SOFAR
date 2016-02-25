@@ -42,7 +42,7 @@ public class ThresholdsDecision {
 		for(double i = 0.00 ; i<0.5 ; i=i+0.05){
 			Thresholds.Graph_Min_RI = i;
 			ValidatorController v = new ValidatorController();
-			resultList.add(v.doSentenceValidation("prs"));
+			resultList.add(v.doSentenceValidation("prs",false));
 		}
 		
 		for(Result r : resultList)
@@ -61,7 +61,7 @@ public class ThresholdsDecision {
 		for(double i = 0.1 ; i<1.01 ; i=i+0.1){
 			Thresholds.Matched_Pattern_Min_Equal_Rate = i;
 			ValidatorController v = new ValidatorController();
-			resultList.add(v.doSentenceValidation("PRS"));
+			resultList.add(v.doSentenceValidation("PRS",false));
 		}
 		
 		for(Result r : resultList)
@@ -82,7 +82,7 @@ public class ThresholdsDecision {
 			for(double i = 0.00 ; i<0.5 ; i=i+0.05){
 				Thresholds.Graph_Verb_Occr_Criteria = i;
 				ValidatorController v = new ValidatorController();
-				Result r = v.doSentenceValidation(prj);
+				Result r = v.doSentenceValidation(prj,false);
 				r.setProjectCode(prj);
 				resultList.add(r);
 			}
@@ -105,7 +105,7 @@ public class ThresholdsDecision {
 				Thresholds.RI_Share = i;
 				Thresholds.FrequencyFactor_Share = 1.0 - i;
 				ValidatorController v = new ValidatorController();
-				Result r = v.doSentenceValidation(prj);
+				Result r = v.doSentenceValidation(prj,false);
 				r.setProjectCode(prj);
 				resultList.add(r);
 			}
@@ -127,7 +127,7 @@ public class ThresholdsDecision {
 			for(double i = 0.0 ; i<=1 ; i=i+0.1){
 				Thresholds.Edge_Weight_Threshold = i;
 				ValidatorController v = new ValidatorController();
-				Result r = v.doSentenceValidation(prj);
+				Result r = v.doSentenceValidation(prj,false);
 				r.setProjectCode(prj);
 				resultList.add(r);
 			}
@@ -157,7 +157,7 @@ public class ThresholdsDecision {
 					Thresholds.Weight_Of_PatternWeight_COUNT_AVGRI_LENGHT[1] = j;
 					Thresholds.Weight_Of_PatternWeight_COUNT_AVGRI_LENGHT[2] = 1.0-i-j;
 					ValidatorController v = new ValidatorController();
-					Result r = v.doSentenceValidation(prj);
+					Result r = v.doSentenceValidation(prj,false);
 					r.setProjectCode(prj);
 					resultList.add(r);
 					stage++;
@@ -181,7 +181,7 @@ public class ThresholdsDecision {
 			for(double i = 0.0 ; i<=1 ; i=i+0.1){
 				Thresholds.Word_Min_Frequency_On_Similarity = i;
 				ValidatorController v = new ValidatorController();
-				Result r = v.doSentenceValidation(prj);
+				Result r = v.doSentenceValidation(prj,false);
 				r.setProjectCode(prj);
 				resultList.add(r);
 			}
@@ -203,7 +203,7 @@ public class ThresholdsDecision {
 				Thresholds.Weight_Of_Scenario_Similarity_EQUALITY_PATTERNSCORE[0] = i;
 				Thresholds.Weight_Of_Scenario_Similarity_EQUALITY_PATTERNSCORE[1] = 1.0 - i;
 				ValidatorController v = new ValidatorController();
-				Result r = v.doSentenceValidation(prj);
+				Result r = v.doSentenceValidation(prj,false);
 				r.setProjectCode(prj);
 				resultList.add(r);
 			}
