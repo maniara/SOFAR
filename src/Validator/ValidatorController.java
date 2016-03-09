@@ -28,13 +28,35 @@ public class ValidatorController {
 	private ArrayList<UseCase> targetProject;
 	//ArrayList<UseCase> randomRemovedTargetProject;
 	
-	public Result doSentenceValidation(String targetProjectId, boolean dbStore){
+	public void setPatternSet(String targetProjectId)
+	{
+		this.targetProjectId = targetProjectId;
+		getVerbCluster(targetProjectId,true);
+		getFlowGraph(targetProjectId);
+		
+		getTargetProject(targetProjectId);
+	}
+	
+	public Result doSentenceValidation(String targetProjectId, boolean dbStore, boolean printLog){
 		this.targetProjectId = targetProjectId;
 		getVerbCluster(targetProjectId,true);
 		getFlowGraph(targetProjectId);
 		getPatterns(targetProjectId);
 		getTargetProject(targetProjectId);
-		return validate(dbStore);
+		return validate(dbStore,printLog);
+	}
+	
+	public Result doSentenceValidation(String targetProjectId, boolean dbStore, boolean printLog, boolean makePattern){
+		//this.targetProjectId = targetProjectId;
+		if(makePattern)
+		{
+			getVerbCluster(targetProjectId,true);
+			getFlowGraph(targetProjectId);
+			//getPatterns(targetProjectId);
+			getTargetProject(targetProjectId);
+		}
+		getPatterns(targetProjectId);
+		return validate(dbStore,printLog);
 	}
 	
 	public Result doNoExceptValidation(String targetProjectId, boolean dbStore){
@@ -43,7 +65,7 @@ public class ValidatorController {
 		getFlowGraph();
 		getPatterns();
 		getTargetProject(targetProjectId);
-		return validate(dbStore);
+		return validate(dbStore,true);
 	}
 	
 	public Result doCompleteScenarioValidation(String targetProjectId)
@@ -62,7 +84,7 @@ public class ValidatorController {
 		getFlowGraph(targetProjectId);
 		getPatterns(targetProjectId);
 		getTargetScenario(targetProjectId,ucId);
-		return validate(dbStore);
+		return validate(dbStore,true);
 	}
 	
 	private void getTargetScenario(String targetProjectId,String ucId){
@@ -104,7 +126,7 @@ public class ValidatorController {
 			}
 			System.out.println("");
 			
-			ArrayList<MissedAction> missedActionMap = afc.findMissedAction(sentenceList,true);
+			ArrayList<MissedAction> missedActionMap = afc.findMissedAction(sentenceList,true,true);
 			
 			if(missedActionMap.size() == 0)
 				correct++;
@@ -113,7 +135,7 @@ public class ValidatorController {
 		return new Result(totalTry,0,correct);
 	}
 
-	private Result validate(boolean dbStore) {
+	private Result validate(boolean dbStore, boolean printLog) {
 		ValidationResultAccessor vra = new ValidationResultAccessor();
 		
 		System.out.println("Try;UCID;Origin;MissedAction;Input;MissedRoute;Result;Extracted;Found");
@@ -132,8 +154,6 @@ public class ValidatorController {
 				String insertString = "";
 				boolean findThisTry = false; 
 				totalTry++;
-				if(totalTry == 37)
-					System.out.print("");
 //				if(totalTry != 2)
 //					continue;
 				Sentence removedSentence = originSentenceList.get(i);
@@ -141,28 +161,37 @@ public class ValidatorController {
 				sentenceList.remove(i);
 
 				//print result part 1
-				System.out.print(totalTry+";"+uc.getUseCaseID()+";");
-				insertString = insertString + totalTry+";"+uc.getUseCaseID()+";"; 
+				if(printLog)
+				{
+					System.out.print(totalTry+";"+uc.getUseCaseID()+";");
+				}
+				insertString = insertString + totalTry+";"+uc.getUseCaseID()+";";
+				
 				for(Sentence sen : originSentenceList)
 				{
-					System.out.print(sen.getSentenceType()+":"+sen.getRepresentVerb()+"-");
+					if(printLog)
+						System.out.print(sen.getSentenceType()+":"+sen.getRepresentVerb()+"-");
 					insertString = insertString + sen.getSentenceType()+":"+sen.getRepresentVerb()+"-";
 				}
-				System.out.print(";"+removedSentence.getVerb()+"("+removedSentence.getSentenceOrder()+");");
+				if(printLog)
+					System.out.print(";"+removedSentence.getVerb()+"("+removedSentence.getSentenceOrder()+");");
 				insertString = insertString + ";"+removedSentence.getVerb()+";"+removedSentence.getSentenceOrder()+";";
 				
 				for(Sentence sen : sentenceList)
 				{
-					System.out.print(sen.getSentenceType()+":"+sen.getRepresentVerb()+"-");
+					if(printLog)
+						System.out.print(sen.getSentenceType()+":"+sen.getRepresentVerb()+"-");
 					insertString = insertString + sen.getSentenceType()+":"+sen.getRepresentVerb()+"-";
 				}
-				System.out.print(";");
+				if(printLog)
+					System.out.print(";");
 				insertString = insertString + ";";
 				//end of print
 
-				ArrayList<MissedAction> missedActionMap = afc.findMissedAction(sentenceList,true);
+				ArrayList<MissedAction> missedActionMap = afc.findMissedAction(sentenceList,true,printLog);
 				insertString = insertString + afc.extRoute;
-				System.out.print(missedActionMap+";");
+				if(printLog)
+					System.out.print(missedActionMap+";");
 				insertString =  insertString + missedActionMap.toString() + ";";
 				
 				
@@ -193,8 +222,8 @@ public class ValidatorController {
 				}
 				//System.out.println("Result : " + findThisTry);
 				
-
-				System.out.println(extedOfMA+";"+findThisTry);
+				if(printLog)
+					System.out.println(extedOfMA+";"+findThisTry);
 				insertString =  insertString + extedOfMA+";"+findThisTry+";";
 				if(findThisTry && extedOfMA == 1)
 					insertString = insertString + "TRUE";
@@ -256,11 +285,11 @@ public class ValidatorController {
 	{
 		PatternGeneratorController cont = new PatternGeneratorController(flowGraph);
 		patterns = cont.makePatterns(true, exceptedProjectID);
-		for(PatternFragment pf : patterns)
+		/*for(PatternFragment pf : patterns)
 		{
 			if(pf != null)
 				System.out.println(pf);
-		}
+		}*/
 		System.out.println("--- "+patterns.size()+" patterns generated ---");
 	}
 

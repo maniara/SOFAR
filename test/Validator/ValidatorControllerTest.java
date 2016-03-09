@@ -28,7 +28,7 @@ public class ValidatorControllerTest {
 		prjList.add("PRS");
 		prjList.add("POS");
 		prjList.add("TMS");
-		prjList.add("EFF");
+		prjList.add("STS");
 		prjList.add("OPS");
 		return prjList;
 	}
@@ -46,7 +46,7 @@ public class ValidatorControllerTest {
 		prjList.add("PRS");
 		prjList.add("POS");
 		prjList.add("TMS");
-		prjList.add("EFF");
+		prjList.add("STS");
 		prjList.add("OPS");
 		return prjList;
 	}
@@ -78,7 +78,7 @@ public class ValidatorControllerTest {
 		//Thresholds.Weight_Of_Scenario_Similarity_EQUALITY_PATTERNSCORE = {0.2,0.8};
 		for(String prj : prjList){
 			ValidatorController v = new ValidatorController();
-			Result r = v.doSentenceValidation(prj,true);
+			Result r = v.doSentenceValidation(prj,true,false);
 			r.setProjectCode(prj);
 			resultList.add(r);
 		}
@@ -126,7 +126,7 @@ public class ValidatorControllerTest {
 		ArrayList<Result> resultList = new ArrayList<Result>();
 				
 		ValidatorController v = new ValidatorController();
-		Result r = v.doSentenceValidation(prj,false);
+		Result r = v.doSentenceValidation(prj,false,false);
 		r.setProjectCode(prj);
 		resultList.add(r);
 		printResult(resultList);

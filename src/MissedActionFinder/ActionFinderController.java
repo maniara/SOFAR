@@ -47,7 +47,7 @@ public class ActionFinderController {
 		}
 	}
 	
-	public ArrayList<MissedAction> findMissedAction(ArrayList<Sentence> sentenceList, boolean forValidation)
+	public ArrayList<MissedAction> findMissedAction(ArrayList<Sentence> sentenceList, boolean forValidation, boolean printLog)
 	{
 		extRoute = "";
 		this.wholeSentenceList = sentenceList;
@@ -72,7 +72,8 @@ public class ActionFinderController {
 		
 		for(PatternPathRoad pp : optimalRoute)
 		{
-			System.out.print(pp.toString()+"/"+pp.getEqualityScore()+"/"+pp.getPatternScore()+"/"+pp.getWeight()+"|");
+			if(printLog)
+				System.out.print(pp.toString()+"/"+pp.getEqualityScore()+"/"+pp.getPatternScore()+"/"+pp.getWeight()+"|");
 			extRoute=extRoute+pp.toString()+"/"+pp.getEqualityScore()+"/"+pp.getPatternScore()+"/"+pp.getWeight()+"|";
 			if(pp.hasMissed())
 			{
@@ -83,7 +84,8 @@ public class ActionFinderController {
 				
 			}
 		}
-		System.out.print(";");
+		if(printLog)
+			System.out.print(";");
 		extRoute = extRoute + ";";
 		
 		return missedAction;
@@ -253,13 +255,16 @@ public class ActionFinderController {
 		{
 			ArrayList<Sentence> oneList = new ArrayList<Sentence>();
 			oneList.add(sentenceList.get(i));
-			roadList.add(new PatternPathRoad(i,i+1,0.0,new PatternFragment("EMPTY"),oneList));
+			roadList.add(new PatternPathRoad(i,i+1,0.01,new PatternFragment("EMPTY"),oneList));
 		}
 		
-		/*for(PatternPathRoad pp:roadList)
+		/*System.out.println("=== Candidate extract ===");
+		for(PatternPathRoad pp:roadList)
 		{
 			System.out.println(pp.toString()+" : "+pp.getWeight());
-		}*/
+		}
+		System.out.println("=== End of candidate extract ===");*/
+		
 		
 		return roadList;
 	}
