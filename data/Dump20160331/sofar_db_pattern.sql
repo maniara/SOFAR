@@ -16,30 +16,27 @@
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
--- Table structure for table `synonymdictionary`
+-- Table structure for table `pattern`
 --
 
-DROP TABLE IF EXISTS `synonymdictionary`;
+DROP TABLE IF EXISTS `pattern`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `synonymdictionary` (
-  `clusterID` int(11) NOT NULL AUTO_INCREMENT,
-  `representives` varchar(45) NOT NULL,
-  `verbs` varchar(1000) DEFAULT NULL,
-  `iscustom` tinyint(1) NOT NULL,
-  `subjectType` varchar(1) DEFAULT NULL,
-  PRIMARY KEY (`clusterID`)
-) ENGINE=InnoDB AUTO_INCREMENT=2936 DEFAULT CHARSET=utf8;
+CREATE TABLE `pattern` (
+  `patternNum` int(11) NOT NULL AUTO_INCREMENT,
+  `patternID` varchar(45) DEFAULT NULL,
+  `patternName` varchar(45) DEFAULT NULL,
+  PRIMARY KEY (`patternNum`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `synonymdictionary`
+-- Dumping data for table `pattern`
 --
 
-LOCK TABLES `synonymdictionary` WRITE;
-/*!40000 ALTER TABLE `synonymdictionary` DISABLE KEYS */;
-INSERT INTO `synonymdictionary` VALUES (2916,'delete','delete;remove',1,'s'),(2917,'finish','finish;complete;exit',1,'s'),(2918,'insert','insert;input;enter',1,'u'),(2920,'display','display;show;present;print',1,'s'),(2921,'alert','notify;alert;alarm',1,'s'),(2927,'check','check;verify;validate',1,'s'),(2928,'request','request;submit;click',1,'u'),(2929,'choose','choose;select',1,'u'),(2932,'search','search;retrieve',1,'s'),(2933,'modify','modify;update;change',1,'s'),(2934,'modify','modify;change;update',1,'u'),(2935,'save','save;store;record;regist',1,'s');
-/*!40000 ALTER TABLE `synonymdictionary` ENABLE KEYS */;
+LOCK TABLES `pattern` WRITE;
+/*!40000 ALTER TABLE `pattern` DISABLE KEYS */;
+/*!40000 ALTER TABLE `pattern` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
@@ -51,4 +48,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2016-02-25 16:30:01
+-- Dump completed on 2016-03-31 18:21:58

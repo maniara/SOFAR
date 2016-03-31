@@ -27,7 +27,8 @@ private Connection conn;
 	{
 		String[] resArray = valResult.split(";");
 		Statement stmt = null;
-		String query = String.format("INSERT INTO "+DataAccessString.dbName+".`validationresult` (`try`, `ucid`, `originScenario`, `missedAction`,`missedSeq`,`inputScenario`,`extRoute`,`result`,`extractedNum`,`found`,`success`) "
+		String query = String.format("INSERT INTO "+DataAccessString.dbName+".`validationresult` (`try`, `ucid`"
+				+ ", `originScenario`, `missedAction`,`missedSeq`,`inputScenario`,`extRoute`,`result`,`extractedNum`,`found`,`success`) "
 				+ "VALUES ('%s', '%s', '%s', '%s','%s','%s','%s','%s','%s','%s','%s')",
 				resArray[0],resArray[1],resArray[2],resArray[3],resArray[4],resArray[5],resArray[6],resArray[7],resArray[8],resArray[9],resArray[10]);
 
@@ -59,4 +60,5 @@ private Connection conn;
 			ex.printStackTrace();
 		}
 	}
+
 }

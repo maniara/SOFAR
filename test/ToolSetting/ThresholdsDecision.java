@@ -30,6 +30,7 @@ public class ThresholdsDecision {
 		prjList.add("TMS");
 		prjList.add("STS");
 		prjList.add("OPS");
+		prjList.add("PAY");
 		return prjList;
 	}
 	
@@ -48,6 +49,7 @@ public class ThresholdsDecision {
 		prjList.add("TMS");
 		prjList.add("STS");
 		prjList.add("OPS");
+		prjList.add("PAY");
 		return prjList;
 	}
 	
@@ -160,7 +162,9 @@ public class ThresholdsDecision {
 	@Test
 	public void doPatternScoreRatioCheck()
 	{
-		ArrayList<String> prjList = this.getIndustryProjectList();
+		ArrayList<String> prjList = new ArrayList<String>();
+		prjList.add("UIS");
+		//ArrayList<String> prjList = this.getIndustryProjectList();
 		ArrayList<Result> resultList = new ArrayList<Result>();
 		int stage = 0;
 				
@@ -169,8 +173,8 @@ public class ThresholdsDecision {
 			System.out.println("=== "+prj+" starting ===");
 			ValidatorController v = new ValidatorController();
 			v.setPatternSet(prj);
-			for(double i =0.0; i<=0.0 ; i=i+0.1){
-				for(double j= 0.0 ; j<=0.0 ; j=j+0.1){
+			for(double i =0.0; i<=1.0 ; i=i+0.1){
+				for(double j= 0.0 ; j<=1.0 ; j=j+0.1){
 					if(j + i > 1)
 						continue;
 					//System.out.println("--"+stage+"--");

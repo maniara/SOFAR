@@ -16,30 +16,30 @@
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
--- Table structure for table `verbcluster`
+-- Table structure for table `synonymdictionary`
 --
 
-DROP TABLE IF EXISTS `verbcluster`;
+DROP TABLE IF EXISTS `synonymdictionary`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `verbcluster` (
+CREATE TABLE `synonymdictionary` (
   `clusterID` int(11) NOT NULL AUTO_INCREMENT,
   `representives` varchar(45) NOT NULL,
   `verbs` varchar(1000) DEFAULT NULL,
   `iscustom` tinyint(1) NOT NULL,
   `subjectType` varchar(1) DEFAULT NULL,
   PRIMARY KEY (`clusterID`)
-) ENGINE=InnoDB AUTO_INCREMENT=3092 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=2936 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `verbcluster`
+-- Dumping data for table `synonymdictionary`
 --
 
-LOCK TABLES `verbcluster` WRITE;
-/*!40000 ALTER TABLE `verbcluster` DISABLE KEYS */;
-INSERT INTO `verbcluster` VALUES (2876,'delete','delete;remove',1,'s'),(2877,'finish','finish;complete;exit',1,'s'),(2878,'insert','insert;input;enter',1,'u'),(2888,'save','save;store;record',1,'s'),(2893,'display','display;show;present;print',1,'s'),(2895,'alert','notify;alert;alarm',1,'s'),(3079,'confirm','confirm',0,'u'),(3080,'request','request;submit;click',0,'u'),(3081,'modify','modify;change;update',0,'u'),(3082,'insert','insert;input;enter;requst',0,'u'),(3083,'choose','choose;select',0,'u'),(3084,'delete','delete;remove',0,'u'),(3085,'modify','modify;update;change',0,'s'),(3086,'search','search;retrieve',0,'s'),(3087,'display','display;show;present;print;publish;create;make',0,'s'),(3088,'save','save;store;record;regist;request;retain;eject;send;assign',0,'s'),(3089,'perform','perform',0,'s'),(3090,'check','check;verify;validate;confirm',0,'s'),(3091,'delete','delete;remove',0,'s');
-/*!40000 ALTER TABLE `verbcluster` ENABLE KEYS */;
+LOCK TABLES `synonymdictionary` WRITE;
+/*!40000 ALTER TABLE `synonymdictionary` DISABLE KEYS */;
+INSERT INTO `synonymdictionary` VALUES (2916,'delete','delete;remove',1,'s'),(2917,'finish','finish;complete;exit',1,'s'),(2918,'insert','insert;input;enter',1,'u'),(2920,'display','display;show;present;print',1,'s'),(2921,'alert','notify;alert;alarm',1,'s'),(2927,'check','check;verify;validate',1,'s'),(2928,'request','request;submit;click',1,'u'),(2929,'choose','choose;select',1,'u'),(2932,'search','search;retrieve',1,'s'),(2933,'modify','modify;update;change',1,'s'),(2934,'modify','modify;change;update',1,'u'),(2935,'save','save;store;record;regist',1,'s');
+/*!40000 ALTER TABLE `synonymdictionary` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
@@ -51,4 +51,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2016-03-09 21:44:09
+-- Dump completed on 2016-03-31 18:21:57

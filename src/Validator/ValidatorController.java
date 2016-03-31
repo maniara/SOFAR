@@ -1,6 +1,7 @@
 package Validator;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 
 import ActionFlowGraph.ActionFlowGraph;
 import ActionFlowGraph.ActionFlowGraphGenerator;
@@ -10,6 +11,8 @@ import Entity.UseCase;
 import Entity.VerbCluster;
 import MissedActionFinder.ActionFinderController;
 import MissedActionFinder.MissedAction;
+import MySQLDataAccess.MissedResultAccessor;
+import MySQLDataAccess.OverExtractedResultAccessor;
 import MySQLDataAccess.ProjectAccessor;
 import MySQLDataAccess.SentenceAccessor;
 import MySQLDataAccess.UseCaseAccessor;
@@ -87,6 +90,15 @@ public class ValidatorController {
 		return validate(dbStore,true);
 	}
 	
+	public Result doOneTryValidation(String targetProjectId, String ucId, int omitNum,boolean dbStore){
+		this.targetProjectId = targetProjectId;
+		getVerbCluster(targetProjectId,true);
+		getFlowGraph(targetProjectId);
+		getPatterns(targetProjectId);
+		getTargetScenario(targetProjectId,ucId);
+		return validate(omitNum,dbStore,true);
+	}
+	
 	private void getTargetScenario(String targetProjectId,String ucId){
 		UseCaseAccessor ua = new UseCaseAccessor();
 		ArrayList<UseCase> ucList= ua.getUseCaseList(targetProjectId);
@@ -126,7 +138,7 @@ public class ValidatorController {
 			}
 			System.out.println("");
 			
-			ArrayList<MissedAction> missedActionMap = afc.findMissedAction(sentenceList,true,true);
+			HashSet<MissedAction> missedActionMap = afc.findMissedAction(sentenceList,true,true);
 			
 			if(missedActionMap.size() == 0)
 				correct++;
@@ -137,8 +149,11 @@ public class ValidatorController {
 
 	private Result validate(boolean dbStore, boolean printLog) {
 		ValidationResultAccessor vra = new ValidationResultAccessor();
+		OverExtractedResultAccessor oera = new OverExtractedResultAccessor();
+		MissedResultAccessor mra = new MissedResultAccessor();
 		
-		System.out.println("Try;UCID;Origin;MissedAction;Input;MissedRoute;Result;Extracted;Found");
+		if(printLog)
+			System.out.println("Try;UCID;Origin;MissedAction;Input;MissedRoute;Result;Extracted;Found");
 		int totalTry = 0;
 		int correct = 0;
 		int incorrect = 0;
@@ -151,6 +166,8 @@ public class ValidatorController {
 			afc.findRepresentiveVerb(originSentenceList);
 //			
 			for(int i=0;i<originSentenceList.size();i++){
+				String missedResultString = "";
+				int correctInThisTry = 0;
 				String insertString = "";
 				boolean findThisTry = false; 
 				totalTry++;
@@ -188,12 +205,12 @@ public class ValidatorController {
 				insertString = insertString + ";";
 				//end of print
 
-				ArrayList<MissedAction> missedActionMap = afc.findMissedAction(sentenceList,true,printLog);
+				HashSet<MissedAction> missedActionMap = afc.findMissedAction(sentenceList,true,printLog);
 				insertString = insertString + afc.extRoute;
 				if(printLog)
 					System.out.print(missedActionMap+";");
 				insertString =  insertString + missedActionMap.toString() + ";";
-				
+				missedResultString = insertString;
 				
 				int extedOfMA = 0;
 				String MAString = "";
@@ -210,17 +227,26 @@ public class ValidatorController {
 					int MissedPrevAction = ma.prevIndexOfMissed();
 					//System.out.println("REM: "+removedAction+"("+removedActionNum +"), GOT: "+missedAction +"("+(MissedPrevAction+1)+")");
 					
+					
 					if(removedAction.equals(missedAction) && removedActionNum == MissedPrevAction+1){
 					//if(removedAction.equals(missedAction)){
+						correctInThisTry++;
 						correct++;
 						findThisTry = true;
 					}
 					else{
-						//System.out.println();
 						incorrect++;
+						
+						String extString = insertString;
+						extString = extString + missedAction + ";" + (MissedPrevAction+1);
+						
+						if(dbStore)
+							oera.addResult(extString);
 					}
 				}
-				//System.out.println("Result : " + findThisTry);
+
+				if(correctInThisTry > 1)
+					System.out.println("ERROR:"+insertString);
 				
 				if(printLog)
 					System.out.println(extedOfMA+";"+findThisTry);
@@ -230,8 +256,137 @@ public class ValidatorController {
 				else
 					insertString = insertString + "FALSE";
 				
-				if(dbStore)
+				if(dbStore){
 					vra.addResult(insertString);
+					if(!findThisTry)
+						mra.addResult(missedResultString);
+				}
+			}
+
+		}
+		
+		System.out.println("Missed Sentence #: "+totalTry);
+		System.out.println("Extrected Action: "+allExtracted);
+		System.out.println("Correct: "+correct);
+		
+		return new Result(totalTry,allExtracted,correct);
+	}
+	
+	private Result validate(int omitNum, boolean dbStore, boolean printLog) {
+		ValidationResultAccessor vra = new ValidationResultAccessor();
+		OverExtractedResultAccessor oera = new OverExtractedResultAccessor();
+		MissedResultAccessor mra = new MissedResultAccessor();
+		
+		System.out.println("Try;UCID;Origin;MissedAction;Input;MissedRoute;Result;Extracted;Found");
+		int totalTry = 0;
+		int correct = 0;
+		int incorrect = 0;
+		int allExtracted = 0;
+		for(UseCase uc : targetProject)
+		{
+			//UseCase uc = targetProject.get(0);
+			ArrayList<Sentence> originSentenceList = new SentenceAccessor().getBasicFlowSentenceList(uc.getProjectID(), uc.getUseCaseID());
+			ActionFinderController afc = new ActionFinderController(patterns,clusterList);
+			afc.findRepresentiveVerb(originSentenceList);
+//			
+			for(int i=0;i<originSentenceList.size();i++){
+				if(originSentenceList.get(i).getSentenceSeq() != omitNum)
+					continue;
+				String missedResultString = "";
+				int correctInThisTry = 0;
+				String insertString = "";
+				boolean findThisTry = false; 
+				totalTry++;
+//				if(totalTry != 2)
+//					continue;
+				Sentence removedSentence = originSentenceList.get(i);
+				ArrayList<Sentence> sentenceList = new ArrayList<Sentence>(originSentenceList);
+				sentenceList.remove(i);
+
+				//print result part 1
+				if(printLog)
+				{
+					System.out.print(totalTry+";"+uc.getUseCaseID()+";");
+				}
+				insertString = insertString + totalTry+";"+uc.getUseCaseID()+";";
+				
+				for(Sentence sen : originSentenceList)
+				{
+					if(printLog)
+						System.out.print(sen.getSentenceType()+":"+sen.getRepresentVerb()+"-");
+					insertString = insertString + sen.getSentenceType()+":"+sen.getRepresentVerb()+"-";
+				}
+				if(printLog)
+					System.out.print(";"+removedSentence.getVerb()+"("+removedSentence.getSentenceOrder()+");");
+				insertString = insertString + ";"+removedSentence.getVerb()+";"+removedSentence.getSentenceOrder()+";";
+				
+				for(Sentence sen : sentenceList)
+				{
+					if(printLog)
+						System.out.print(sen.getSentenceType()+":"+sen.getRepresentVerb()+"-");
+					insertString = insertString + sen.getSentenceType()+":"+sen.getRepresentVerb()+"-";
+				}
+				if(printLog)
+					System.out.print(";");
+				insertString = insertString + ";";
+				//end of print
+
+				HashSet<MissedAction> missedActionMap = afc.findMissedAction(sentenceList,true,printLog);
+				insertString = insertString + afc.extRoute;
+				if(printLog)
+					System.out.print(missedActionMap+";");
+				insertString =  insertString + missedActionMap.toString() + ";";
+				missedResultString = insertString;
+				
+				int extedOfMA = 0;
+				String MAString = "";
+				for(MissedAction ma : missedActionMap)
+				{
+					allExtracted++;
+					extedOfMA++;
+					String removedAction = removedSentence.getVerbString();
+					//String beforeAction = "";
+					int removedActionNum = Integer.parseInt(removedSentence.getSentenceOrder());
+
+					String missedAction = ma.getActionString();
+					//String missedBeforeAction = ma.beforeSentence().toString();
+					int MissedPrevAction = ma.prevIndexOfMissed();
+					//System.out.println("REM: "+removedAction+"("+removedActionNum +"), GOT: "+missedAction +"("+(MissedPrevAction+1)+")");
+					
+					
+					if(removedAction.equals(missedAction) && removedActionNum == MissedPrevAction+1){
+					//if(removedAction.equals(missedAction)){
+						correctInThisTry++;
+						correct++;
+						findThisTry = true;
+					}
+					else{
+						incorrect++;
+						
+						String extString = insertString;
+						extString = extString + missedAction + ";" + (MissedPrevAction+1);
+						
+						if(dbStore)
+							oera.addResult(extString);
+					}
+				}
+
+				if(correctInThisTry > 1)
+					System.out.println("ERROR:"+insertString);
+				
+				if(printLog)
+					System.out.println(extedOfMA+";"+findThisTry);
+				insertString =  insertString + extedOfMA+";"+findThisTry+";";
+				if(findThisTry && extedOfMA == 1)
+					insertString = insertString + "TRUE";
+				else
+					insertString = insertString + "FALSE";
+				
+				if(dbStore){
+					vra.addResult(insertString);
+					if(!findThisTry)
+						mra.addResult(missedResultString);
+				}
 			}
 
 		}

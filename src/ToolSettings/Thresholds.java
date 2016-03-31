@@ -22,6 +22,6 @@ public class Thresholds {
 	
 	//Action Finding
 	public static double Matched_Pattern_Min_Equal_Rate = 0.3;
-	public static double[] Weight_Of_Scenario_Similarity_EQUALITY_PATTERNSCORE={0.9,0.1};
+	public static double[] Weight_Of_Scenario_Similarity_EQUALITY_PATTERNSCORE={0.1,0.0};
 	
 }

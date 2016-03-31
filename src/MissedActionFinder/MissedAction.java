@@ -118,6 +118,40 @@ public class MissedAction{// implements Comparable {
 			return this.wholeSentence.get(this.prevIndexOfMissed()).toString();
 	}
 	
+	@Override
+	public boolean equals(Object o)
+	{
+		MissedAction ma = (MissedAction) o;
+		
+		return ma.toString().equals(this.toString());
+	}
+	
+	@Override
+	public int hashCode()
+	{
+		return this.toString().hashCode();
+	}
 
+	public int getStartSeq() {
+		return startSeq;
+	}
+
+	public int getMissedSeqOfPattern() {
+		return missedSeqOfPattern;
+	}
+	
+	public boolean isLastIndex()
+	{
+		if(this.getMissedSeqOfPattern()+1 == this.pf.getVerbList().size())
+			return true;
+		else 
+			return false;
+	}
+
+	public ArrayList<Sentence> getTargetSentences() {
+		return targetSentences;
+	}
+	
+	
 	
 }

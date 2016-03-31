@@ -90,14 +90,22 @@ public class PatternPathRoad {
 
 	public ArrayList<MissedAction> getMissedActionMap() {
 		ArrayList<MissedAction> retList = new ArrayList<MissedAction>();
-		for(MissedAction ma:missedActionList)
-		{
-			if(!ma.getActionString().contains("ScenarioStart"))
-				retList.add(ma);
-				
+		if(missedActionList != null){
+			for(MissedAction ma:missedActionList)
+			{
+				if(!ma.getActionString().contains("ScenarioStart"))
+					retList.add(ma);
+					
+			}
 		}
-		
 		return retList;
+	}
+	
+	public void removeMissedAction(MissedAction ma)
+	{
+		this.missedActionList.remove(ma);
+		if(missedActionList.size() == 0)
+			this.hasMissed = false;
 	}
 
 	public void setMissedActionMap(ArrayList<MissedAction> missedActionMap) {

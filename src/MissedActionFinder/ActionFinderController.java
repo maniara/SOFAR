@@ -3,6 +3,7 @@ package MissedActionFinder;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 
 import Entity.Flow;
 import Entity.Sentence;
@@ -47,7 +48,7 @@ public class ActionFinderController {
 		}
 	}
 	
-	public ArrayList<MissedAction> findMissedAction(ArrayList<Sentence> sentenceList, boolean forValidation, boolean printLog)
+	public HashSet<MissedAction> findMissedAction(ArrayList<Sentence> sentenceList, boolean forValidation, boolean printLog)
 	{
 		extRoute = "";
 		this.wholeSentenceList = sentenceList;
@@ -60,7 +61,7 @@ public class ActionFinderController {
 		
 		Collections.sort(sentenceList);
 		
-		ArrayList<MissedAction> missedAction = new ArrayList<MissedAction>(); 
+		HashSet<MissedAction> missedAction = new HashSet<MissedAction>(); 
 
 		if(this.patternSet == null)
 			checkAndLoadPattern();
@@ -69,6 +70,45 @@ public class ActionFinderController {
 		findRepresentiveVerb(sentenceList);
 		ArrayList<PatternPathRoad> roadList = drawPatternPath(sentenceList);
 		ArrayList<PatternPathRoad> optimalRoute = OptimalRouteGenerator.getOptimalRoute(sentenceList.size(),roadList);
+		
+		//Remove Duplicated(16.3.29 added)
+		
+		for(PatternPathRoad pp : optimalRoute)
+		{
+			ArrayList<MissedAction> removeTarget = new ArrayList<MissedAction>();
+//			if(pp.getMatchedPattern().toString().equals("s:ScenarioStart-u:request-s:display"))
+//				System.out.println("");
+			if(pp.getMissedActionMap() == null)
+				continue;
+			for(MissedAction ma : pp.getMissedActionMap())
+			{
+				//if missed is same to prev action
+				int prevIndex = ma.prevIndexOfMissed();
+				/*if(ma.getActionString().equals(ma.beforeSentence())){
+					System.out.println(sentenceList.get(prevIndex).getVerbString());
+					System.out.println(ma.getActionString());
+					System.out.println(ma.getStartSeq());
+					System.out.println(ma.getMissedActionSeq());
+				}*/
+				if(prevIndex != 0 && ma.getStartSeq() != 0 && sentenceList.get(prevIndex).getVerbString().equals(ma.getActionString()))
+				{
+					if(ma.getMissedSeqOfPattern() == 0){
+						removeTarget.add(ma);
+					//	System.out.println("\nC2 occur");
+					}
+				}
+
+				//if missed is same to next action
+				int nextIndex = ma.prevIndexOfMissed() + 1;
+				if(nextIndex < sentenceList.size() && ma.isLastIndex() && sentenceList.get(nextIndex).getVerbString().equals(ma.getActionString()))
+					removeTarget.add(ma);
+			}
+			for(MissedAction ma:removeTarget)
+			{
+				pp.removeMissedAction(ma);
+			}
+		}
+		//End Remove Duplicated
 		
 		for(PatternPathRoad pp : optimalRoute)
 		{
@@ -87,7 +127,7 @@ public class ActionFinderController {
 		if(printLog)
 			System.out.print(";");
 		extRoute = extRoute + ";";
-		
+	
 		return missedAction;
 
 	}
@@ -361,7 +401,12 @@ public class ActionFinderController {
 				else
 					prevSentenceString = target.get(j-1).getSentenceType()+":"+target.get(j-1).getRepresentVerb();
 				
-				missedAction.add(getMissedActionObject(from + j, prevSentenceString, i,patternString,pf,target));
+				MissedAction mao = getMissedActionObject(from + j, prevSentenceString, i,patternString,pf,target);
+				//if(i==0&&target.get(mao.prevIndexOfMissed()).getVerbString().equals(mao.getActionString())){}
+				//else if(i+1 == pf.getVerbList().size()&&target.get(mao.prevIndexOfMissed()+2).getVerbString().equals(mao.getActionString())){}
+				//else
+				missedAction.add(mao);
+				//End
 				i++;
 			}
 			

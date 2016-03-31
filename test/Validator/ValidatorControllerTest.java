@@ -3,6 +3,8 @@ package Validator;
 import java.util.ArrayList;
 import org.junit.Test;
 
+import MySQLDataAccess.MissedResultAccessor;
+import MySQLDataAccess.OverExtractedResultAccessor;
 import MySQLDataAccess.ValidationResultAccessor;
 import ToolSettings.Thresholds;
 
@@ -69,8 +71,18 @@ public class ValidatorControllerTest {
 	@Test
 	public void doWholeValidation()
 	{
-		ValidationResultAccessor vra = new ValidationResultAccessor();
-		vra.deleteAllResult();
+		boolean dbStore = true;
+		boolean printLog = false;
+		if(dbStore){
+			ValidationResultAccessor vra = new ValidationResultAccessor();
+			vra.deleteAllResult();
+			
+			OverExtractedResultAccessor oera = new OverExtractedResultAccessor();
+			oera.deleteAllResult();
+			
+			MissedResultAccessor mra = new MissedResultAccessor();
+			mra.deleteAllResult();
+		}
 
 		ArrayList<String> prjList = this.getAllProjectList();
 		ArrayList<Result> resultList = new ArrayList<Result>();
@@ -78,7 +90,7 @@ public class ValidatorControllerTest {
 		//Thresholds.Weight_Of_Scenario_Similarity_EQUALITY_PATTERNSCORE = {0.2,0.8};
 		for(String prj : prjList){
 			ValidatorController v = new ValidatorController();
-			Result r = v.doSentenceValidation(prj,true,false);
+			Result r = v.doSentenceValidation(prj,dbStore,printLog);
 			r.setProjectCode(prj);
 			resultList.add(r);
 		}
@@ -122,11 +134,23 @@ public class ValidatorControllerTest {
 	@Test
 	public void doOneProjectValidation()
 	{
-		String prj = "OSS";
+		boolean dbStore = false;
+		boolean printLog = false;
+		if(dbStore){
+			ValidationResultAccessor vra = new ValidationResultAccessor();
+			vra.deleteAllResult();
+			
+			OverExtractedResultAccessor oera = new OverExtractedResultAccessor();
+			oera.deleteAllResult();
+			
+			MissedResultAccessor mra = new MissedResultAccessor();
+			mra.deleteAllResult();
+		}
+		String prj = "UIS";
 		ArrayList<Result> resultList = new ArrayList<Result>();
 				
 		ValidatorController v = new ValidatorController();
-		Result r = v.doSentenceValidation(prj,false,false);
+		Result r = v.doSentenceValidation(prj,dbStore,printLog);
 		r.setProjectCode(prj);
 		resultList.add(r);
 		printResult(resultList);
@@ -135,12 +159,27 @@ public class ValidatorControllerTest {
 	@Test
 	public void doOneScenarioValidation()
 	{
-		String prj = "SKP";
-		String uc = "SKP01";
+		String prj = "UIS";
+		String uc = "UIS17";
 		ArrayList<Result> resultList = new ArrayList<Result>();
 				
 		ValidatorController v = new ValidatorController();
 		Result r = v.doOneScenarioValidation(prj, uc,false);
+		r.setProjectCode(prj);
+		resultList.add(r);
+		printResult(resultList);
+	}
+	
+	@Test
+	public void doOneTryValidation()
+	{
+		String prj = "UIS";
+		String uc = "UIS17";
+		int omit = 6;
+		ArrayList<Result> resultList = new ArrayList<Result>();
+				
+		ValidatorController v = new ValidatorController();
+		Result r = v.doOneTryValidation(prj, uc, omit, false);
 		r.setProjectCode(prj);
 		resultList.add(r);
 		printResult(resultList);

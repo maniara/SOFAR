@@ -29,7 +29,7 @@ CREATE TABLE `verbcluster` (
   `iscustom` tinyint(1) NOT NULL,
   `subjectType` varchar(1) DEFAULT NULL,
   PRIMARY KEY (`clusterID`)
-) ENGINE=InnoDB AUTO_INCREMENT=3079 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=3092 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -38,7 +38,7 @@ CREATE TABLE `verbcluster` (
 
 LOCK TABLES `verbcluster` WRITE;
 /*!40000 ALTER TABLE `verbcluster` DISABLE KEYS */;
-INSERT INTO `verbcluster` VALUES (2876,'delete','delete;remove',1,'s'),(2877,'finish','finish;complete;exit',1,'s'),(2878,'insert','insert;input;enter',1,'u'),(2888,'save','save;store;record',1,'s'),(2893,'display','display;show;present;print',1,'s'),(2895,'alert','notify;alert;alarm',1,'s'),(3066,'confirm','confirm',0,'u'),(3067,'request','request;submit;click',0,'u'),(3068,'modify','modify;change;update',0,'u'),(3069,'insert','insert;input;enter;requst',0,'u'),(3070,'choose','choose;select',0,'u'),(3071,'delete','delete;remove',0,'u'),(3072,'modify','modify;update;change',0,'s'),(3073,'search','search;retrieve',0,'s'),(3074,'display','display;show;present;print;publish;create;make;dispense;assign',0,'s'),(3075,'save','save;store;record;regist;request;retain;eject;send',0,'s'),(3076,'perform','perform',0,'s'),(3077,'check','check;verify;validate;authorize;confirm',0,'s'),(3078,'delete','delete;remove',0,'s');
+INSERT INTO `verbcluster` VALUES (2876,'delete','delete;remove',1,'s'),(2877,'finish','finish;complete;exit',1,'s'),(2878,'insert','insert;input;enter',1,'u'),(2888,'save','save;store;record',1,'s'),(2893,'display','display;show;present;print',1,'s'),(2895,'alert','notify;alert;alarm',1,'s'),(3079,'confirm','confirm',0,'u'),(3080,'request','request;submit;click',0,'u'),(3081,'modify','modify;change;update',0,'u'),(3082,'insert','insert;input;enter;requst',0,'u'),(3083,'choose','choose;select',0,'u'),(3084,'delete','delete;remove',0,'u'),(3085,'modify','modify;update;change',0,'s'),(3086,'search','search;retrieve',0,'s'),(3087,'display','display;show;present;print;publish;create;make',0,'s'),(3088,'save','save;store;record;regist;request;retain;eject;send;assign',0,'s'),(3089,'perform','perform',0,'s'),(3090,'check','check;verify;validate;confirm',0,'s'),(3091,'delete','delete;remove',0,'s');
 /*!40000 ALTER TABLE `verbcluster` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -51,4 +51,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2016-02-25 16:30:03
+-- Dump completed on 2016-03-31 18:21:58
