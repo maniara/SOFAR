@@ -6,12 +6,15 @@ import org.junit.Test;
 
 import ActionFlowGraph.ActionFlowGraph;
 import ActionFlowGraph.ActionFlowGraphGenerator;
+import Entity.Flow;
 import Entity.VerbCluster;
+import MySQLDataAccess.FlowAccessor;
+import TemporalEntities.EntityStorage;
 import VerbClusterGenerater.Generator;
 
 public class GeneratorControllerTest {
 	
-	public void makePatterns(String targetProject){
+	private PatternFragmentSet makePatterns(String targetProject){
 		
 		Generator vcGen = new Generator();
 		ArrayList<VerbCluster> clusterList = vcGen.makeVerbClusterForValidation(targetProject);
@@ -26,15 +29,42 @@ public class GeneratorControllerTest {
 		
 		for(PatternFragment pf : patterns)
 		{
-			String p = pf.toString()+"("+pf.getCountFactor()+","+pf.getAverageRI()+","+pf.getSizeFactor()+","+pf.getAdjustedWeight()+")";
-			System.out.println(p);
+			//String p = pf.toString()+"("+pf.getCountFactor()+","+pf.getAverageRI()+","+pf.getSizeFactor()+","+pf.getAdjustedWeight()+")";
+			//System.out.println(p);
 		}
+		
+		return patterns;
 
 	}
 	
 	@Test
 	public void makePatternTest(){
-		makePatterns("SKP");
+		makePatterns("");
+	}
+	
+	@Test
+	public void findAppliedPattern()
+	{
+		PatternFragmentSet pSet = makePatterns("");
+		FlowAccessor fa = new FlowAccessor();
+		ArrayList<Flow> flowList = EntityStorage.allFlowList;
+		
+
+		
+		for(PatternFragment pf : pSet){
+			System.out.println("-------------------");
+			System.out.println(pf.toString());
+			for(Flow f : flowList){
+				if(f.getIsAlternative() == false){
+					String fString = f.getFlowString();
+			//		System.out.println(fString);
+					if(f.getFlowString().contains(pf.toString()))
+					{
+						System.out.println(f.getProjectID()+":"+f.getUseCaseID()+":"+f.getFlowString());
+					}
+				}
+			}
+		}
 	}
 
 }

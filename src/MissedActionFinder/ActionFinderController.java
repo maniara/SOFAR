@@ -295,7 +295,7 @@ public class ActionFinderController {
 		{
 			ArrayList<Sentence> oneList = new ArrayList<Sentence>();
 			oneList.add(sentenceList.get(i));
-			roadList.add(new PatternPathRoad(i,i+1,0.01,new PatternFragment("EMPTY"),oneList));
+			roadList.add(new PatternPathRoad(i,i+1,0.01,new PatternFragment("NM"),oneList));
 		}
 		
 		/*System.out.println("=== Candidate extract ===");

@@ -13,6 +13,7 @@ import Entity.VerbCluster;
 import MySQLDataAccess.FlowAccessor;
 import MySQLDataAccess.SentenceAccessor;
 import MySQLDataAccess.VerbClusterAccessor;
+import TemporalEntities.EntityStorage;
 import ToolSettings.Thresholds;
 
 public class PatternGeneratorController {
@@ -39,6 +40,7 @@ public class PatternGeneratorController {
 		else
 			flowList = fa.getAllBasicFlowList();
 		
+		EntityStorage.allFlowList = flowList;
 		for(Flow f : flowList){
 			if(f.getIsAlternative() == false)
 				f.addStartNode();
@@ -110,6 +112,7 @@ public class PatternGeneratorController {
 		}*/
 		
 		//makePatternCandidate();
+		System.out.println(pfSet.size());
 		return this.pfSet;
 	}
 	
@@ -161,6 +164,9 @@ public class PatternGeneratorController {
 	{
 		for(PatternFragment pf : this.pfSet)
 		{
+			//getWeightByArcTan
+			//getWeightBySigmoidFunction
+		    //getWeightBySoftsign
 			pf.setCountFactor(pf.getWeightBySigmoidFunction(pf.getConditionalOccrCount(),pfSet.getAverageOccurenceOfPattern()));
 			pf.setSizeFactor(pf.getWeightBySigmoidFunction(pf.getVerbList().size(),pfSet.getAverageSizeOfPattern()));
 			

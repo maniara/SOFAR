@@ -229,11 +229,23 @@ public class PatternFragment  implements Comparable<PatternFragment>{
 		return (double) Math.round(sw*1000)/1000;
 	}
 	
-	public double getWeight(double avgSize)
+	public double getWeightByArcTan(int count, double avgSize)
 	{
-		return this.getAverageWeightFromGraph() * this.getWeightBySigmoidFunction(this.getVerbList().size(),avgSize);
+		int x = count;
+		double atan = Math.atan(x - avgSize);
+		double sw = (atan/3) + 0.5;
+		return (double) Math.round(sw*1000)/1000;
 	}
 	
+	public double getWeightBySoftsign(int count, double avgSize)
+	{
+		double x = count - avgSize;
+		double abx = Math.abs(x);
+		double sw = (x/(1+abx))/2+0.5;
+		return (double) Math.round(sw*1000)/1000;
+		
+	}
+
 	public String getVerb(int level)
 	{
 		if(level < this.getVerbList().size())

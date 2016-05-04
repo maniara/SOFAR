@@ -1,6 +1,7 @@
 package Entity;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 import MySQLDataAccess.SentenceAccessor;
 
@@ -43,6 +44,18 @@ public class Flow {
 		ArrayList<Sentence> SA = new ArrayList<Sentence>();
 		SA.addAll(flow.getSentenceList());
 		this.sentenceList = SA;
+	}
+	
+	public String getFlowString()
+	{
+		String ret = "";
+		for(int i=0;i<this.getSentenceList().size();i++)
+		{
+			Sentence s = this.getSentenceBySeq(i);
+			ret = ret + s.getVerbString()+ "-";
+		}
+		return ret;
+		
 	}
 
 	public char getFlowType()

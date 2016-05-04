@@ -57,6 +57,9 @@ public class ValidatorControllerTest {
 	
 	
 	private void printResult(ArrayList<Result> resultList) {
+		int tot_try=0;
+		int tot_ext=0;
+		int tot_cor=0;
 		String prj = "";
 		for(Result r : resultList)
 		{
@@ -65,14 +68,20 @@ public class ValidatorControllerTest {
 				System.out.println("---"+r.getProjectCode()+"---");
 			}
 			System.out.println(r);
+			tot_try = tot_try + r.getTryNum();
+			tot_ext = tot_ext + r.getExtracted();
+			tot_cor = tot_cor + r.getCorrect();
 		}
+		
+		System.out.println("=== Total ===");
+		System.out.println(tot_try+":"+tot_ext+":"+tot_cor);
 	}
 	
 	@Test
 	public void doWholeValidation()
 	{
 		boolean dbStore = true;
-		boolean printLog = false;
+		boolean printLog = true;
 		if(dbStore){
 			ValidationResultAccessor vra = new ValidationResultAccessor();
 			vra.deleteAllResult();
