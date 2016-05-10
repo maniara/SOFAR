@@ -43,7 +43,7 @@ public class ActionFlowGraphGenerator {
 	
 	public void makeActionFlowGraph()
 	{
-		System.out.println("=== Graph Generating ===");
+		//System.out.println("=== Graph Generating ===");
 		setRepresentiveVerb();
 		makeGraph();
 	}
@@ -130,7 +130,7 @@ public class ActionFlowGraphGenerator {
 		//GraphViewer.draw(this.graph);
 		//printGraph();
 		
-		System.out.println("=== Graph Generated ===");
+		//System.out.println("=== Graph Generated ===");
 	}
 	
 	private void printGraph()

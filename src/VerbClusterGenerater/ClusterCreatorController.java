@@ -373,7 +373,7 @@ public class ClusterCreatorController {
 				{
 					//SYNONYM
 					if(JAWSController.getController().isSynonym(v, dicItem,0.2)){
-						System.out.println(dicItem+":"+v+" are synonym");
+					//	System.out.println(dicItem+":"+v+" are synonym");
 						clusteredVerbs.add(v);
 						vc.addVerb(v);
 						break;
@@ -401,11 +401,11 @@ public class ClusterCreatorController {
 		//Print log
 		if(subjectType.equals("u"))
 		{
-			System.out.println("=== User verb Clustering ===");
+			//System.out.println("=== User verb Clustering ===");
 		}
 		if(subjectType.equals("s"))
 		{
-			System.out.println("=== System verb Clustering ===");
+			//System.out.println("=== System verb Clustering ===");
 		}
 		//3. Create new cluster if the distance is in threshold. 
 		HashSet<Distance> verbDistSet= new HashSet<Distance>();

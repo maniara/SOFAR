@@ -444,7 +444,7 @@ public class ActionFinderController {
 		if((matched*2) == (pf.getVerbList().size()+target.size()))
 			equalRate = 1.0;
 		else
-			equalRate = (double) (matched)/(pf.getVerbList().size()+target.size());
+			equalRate = (double) (matched*Thresholds.EP_supporter)/(pf.getVerbList().size()+target.size());
 		double weight = 0.0;
 		PatternPathRoad road;
 		if(equalRate >= Thresholds.Matched_Pattern_Min_Equal_Rate)

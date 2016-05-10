@@ -112,7 +112,7 @@ public class PatternGeneratorController {
 		}*/
 		
 		//makePatternCandidate();
-		System.out.println(pfSet.size());
+		//System.out.println(pfSet.size());
 		return this.pfSet;
 	}
 	
@@ -261,7 +261,7 @@ public class PatternGeneratorController {
 		{
 			if(!graph.getEdgeStringList().contains(v))
 			{
-				System.out.println(graph.getEdgeStringList());
+				//System.out.println(graph.getEdgeStringList());
 				remList.add(v);
 			}
 		}

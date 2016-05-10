@@ -117,7 +117,7 @@ public class ValidatorController {
 	private void getTargetProject(String targetProjectId) {
 		UseCaseAccessor ua = new UseCaseAccessor();
 		targetProject = ua.getUseCaseList(targetProjectId);
-		System.out.println("--- "+ targetProject.size()+" use case loaded ---");
+		//System.out.println("--- "+ targetProject.size()+" use case loaded ---");
 		
 	}
 	
@@ -265,9 +265,9 @@ public class ValidatorController {
 
 		}
 		
-		System.out.println("Missed Sentence #: "+totalTry);
-		System.out.println("Extrected Action: "+allExtracted);
-		System.out.println("Correct: "+correct);
+		//System.out.println("Missed Sentence #: "+totalTry);
+		//System.out.println("Extrected Action: "+allExtracted);
+		//System.out.println("Correct: "+correct);
 		
 		return new Result(totalTry,allExtracted,correct);
 	}
@@ -391,9 +391,9 @@ public class ValidatorController {
 
 		}
 		
-		System.out.println("Missed Sentence #: "+totalTry);
-		System.out.println("Extrected Action: "+allExtracted);
-		System.out.println("Correct: "+correct);
+		//System.out.println("Missed Sentence #: "+totalTry);
+		//System.out.println("Extrected Action: "+allExtracted);
+		//System.out.println("Correct: "+correct);
 		
 		return new Result(totalTry,allExtracted,correct);
 	}
@@ -420,7 +420,7 @@ public class ValidatorController {
 			clusterList = vcGen.makeVerbClusterForValidation("");
 		//clusterList = vcGen.makeVerbCluster();
 		//System.out.println(clusterList.size());
-		System.out.println("--- "+clusterList.size()+" cluster generated (SAMPLE-"+clusterList.get(0)+") ---");
+		//System.out.println("--- "+clusterList.size()+" cluster generated (SAMPLE-"+clusterList.get(0)+") ---");
 		
 	}
 	
@@ -433,7 +433,7 @@ public class ValidatorController {
 			if(pf != null)
 				System.out.println(pf);
 		}
-		System.out.println("--- "+patterns.size()+" patterns generated ---");
+		//System.out.println("--- "+patterns.size()+" patterns generated ---");
 	}
 	
 	private void getPatterns(String exceptedProjectID)
@@ -445,7 +445,7 @@ public class ValidatorController {
 			if(pf != null)
 				System.out.println(pf);
 		}*/
-		System.out.println("--- "+patterns.size()+" patterns generated ---");
+		//System.out.println("--- "+patterns.size()+" patterns generated ---");
 	}
 
 }

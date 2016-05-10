@@ -80,8 +80,8 @@ public class ValidatorControllerTest {
 	@Test
 	public void doWholeValidation()
 	{
-		boolean dbStore = true;
-		boolean printLog = true;
+		boolean dbStore = false;
+		boolean printLog = false;
 		if(dbStore){
 			ValidationResultAccessor vra = new ValidationResultAccessor();
 			vra.deleteAllResult();
@@ -168,8 +168,8 @@ public class ValidatorControllerTest {
 	@Test
 	public void doOneScenarioValidation()
 	{
-		String prj = "UIS";
-		String uc = "UIS17";
+		String prj = "SKP";
+		String uc = "SKP01";
 		ArrayList<Result> resultList = new ArrayList<Result>();
 				
 		ValidatorController v = new ValidatorController();
@@ -182,9 +182,9 @@ public class ValidatorControllerTest {
 	@Test
 	public void doOneTryValidation()
 	{
-		String prj = "UIS";
-		String uc = "UIS17";
-		int omit = 6;
+		String prj = "cos";
+		String uc = "cos04";
+		int omit = 3;
 		ArrayList<Result> resultList = new ArrayList<Result>();
 				
 		ValidatorController v = new ValidatorController();

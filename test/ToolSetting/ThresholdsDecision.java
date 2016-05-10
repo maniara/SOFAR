@@ -1,6 +1,7 @@
 package ToolSetting;
 
 import java.util.ArrayList;
+import java.util.Date;
 
 import org.junit.Test;
 
@@ -41,7 +42,6 @@ public class ThresholdsDecision {
 		prjList.add("COS");
 		prjList.add("META");
 		prjList.add("UIS");
-		prjList.add("PAY");
 		prjList.add("ATM");
 		prjList.add("OSS");
 		prjList.add("PRS");
@@ -162,38 +162,62 @@ public class ThresholdsDecision {
 	@Test
 	public void doPatternScoreRatioCheck()
 	{
-		ArrayList<String> prjList = new ArrayList<String>();
-		prjList.add("UIS");
-		//ArrayList<String> prjList = this.getIndustryProjectList();
-		ArrayList<Result> resultList = new ArrayList<Result>();
+		//ArrayList<String> prjList = new ArrayList<String>();
+		//prjList.add("UIS");
+		ArrayList<String> prjList = this.getAllProjectList();
+		//ArrayList<Result> resultList = new ArrayList<Result>();
 		int stage = 0;
 				
 		//Thresholds.Weight_Of_Scenario_Similarity_EQUALITY_PATTERNSCORE = {0.2,0.8};
-		for(String prj : prjList){
-			System.out.println("=== "+prj+" starting ===");
-			ValidatorController v = new ValidatorController();
-			v.setPatternSet(prj);
-			for(double i =0.0; i<=1.0 ; i=i+0.1){
-				for(double j= 0.0 ; j<=1.0 ; j=j+0.1){
+	
+			for(double i =0.0; i<=1.0 ; i=i+0.2){
+				for(double j= 0.0 ; j<=1.0 ; j=j+0.2){
+					ArrayList<Result> resultList = new ArrayList<Result>();
 					if(j + i > 1)
 						continue;
-					//System.out.println("--"+stage+"--");
-					Thresholds.Weight_Of_PatternWeight_COUNT_AVGRI_LENGHT[0] = i;
-					Thresholds.Weight_Of_PatternWeight_COUNT_AVGRI_LENGHT[1] = j;
-					double lengthRatio = Math.round((1.0-i-j)*100d) / 100d;
-					Thresholds.Weight_Of_PatternWeight_COUNT_AVGRI_LENGHT[2] = lengthRatio;
-					//ValidatorController v = new ValidatorController();
-					//System.out.println(i+","+j+","+(1.0-i-j));
-					Result r = v.doSentenceValidation(prj,false,false,false);
-					r.setProjectCode(prj);
-					resultList.add(r);
-					stage++;
+					for(String prj : prjList){
+						//System.out.println("=== "+prj+" starting ===");
+						ValidatorController v = new ValidatorController();
+						v.setPatternSet(prj);
+
+						Thresholds.Weight_Of_PatternWeight_COUNT_AVGRI_LENGHT[0] = i;
+						Thresholds.Weight_Of_PatternWeight_COUNT_AVGRI_LENGHT[1] = j;
+						double lengthRatio = Math.round((1.0-i-j)*100d) / 100d;
+						Thresholds.Weight_Of_PatternWeight_COUNT_AVGRI_LENGHT[2] = lengthRatio;
+					//	ValidatorController v = new ValidatorController();
+					//	System.out.println(i+","+j+","+(1.0-i-j));
+						Result r = v.doSentenceValidation(prj,false,false,false);
+						r.setProjectCode(prj);
+						resultList.add(r);
+						stage++;
+					}
+					
+					int tryNum=0;
+					int extNum=0;
+					int corNum=0;
+					for(Result r : resultList)
+					{
+						tryNum = tryNum + r.getTryNum();
+						extNum = extNum + r.getExtracted();
+						corNum = corNum + r.getCorrect();
+					}
+					
+					DecisionEntity de = new DecisionEntity(
+							Thresholds.Weight_Of_PatternWeight_COUNT_AVGRI_LENGHT[0],
+							Thresholds.Weight_Of_PatternWeight_COUNT_AVGRI_LENGHT[1],
+							Thresholds.Weight_Of_PatternWeight_COUNT_AVGRI_LENGHT[2],
+							Thresholds.Weight_Of_Scenario_Similarity_EQUALITY_PATTERNSCORE[0],
+							Thresholds.Weight_Of_Scenario_Similarity_EQUALITY_PATTERNSCORE[1],
+							tryNum,extNum,corNum
+							);
+					System.out.println(de.toString());
+				//	decList.add(de);
 				}
 			}
 
-		}
 		
-		printResult(resultList);
+		
+		//printResult(resultList);
 	}
 	
 	//No result
@@ -253,5 +277,97 @@ public class ThresholdsDecision {
 			}
 			System.out.println(r);
 		}
+	}
+	
+	@Test
+	public void doEPSupporterCheck()
+	{
+		ArrayList<String> prjList = this.getAllProjectList();
+		ArrayList<Result> resultList = new ArrayList<Result>();
+		
+		for(String prj : prjList){
+			System.out.println("=== "+prj+" starting ===");
+			ValidatorController v = new ValidatorController();
+			v.setPatternSet(prj);
+			for(double i =1.0; i<=2.0 ; i=i+0.1){
+				Thresholds.EP_supporter = i;
+				Result r = v.doSentenceValidation(prj,false,false,false);
+				r.setProjectCode(prj);
+				resultList.add(r);
+			}
+		}
+		printResult(resultList);
+	}
+	
+	@Test
+	public void doFinalCheck()
+	{
+		int stage = 0;
+		ArrayList<String> prjList = this.getAllProjectList();
+		ArrayList<DecisionEntity> decList= new ArrayList<DecisionEntity>(); 
+		
+		/*for(double i =0.0; i<=1.0 ; i=i+0.1){*/
+			double i=0.1;
+			for(double j= 0.0 ; j<=1.0 ; j=j+0.1){
+				if(j + i > 1)
+					continue;
+				Thresholds.Weight_Of_PatternWeight_COUNT_AVGRI_LENGHT[0] = i;
+				Thresholds.Weight_Of_PatternWeight_COUNT_AVGRI_LENGHT[1] = j;
+				double lengthRatio = Math.round((1.0-i-j)*100d) / 100d;
+				Thresholds.Weight_Of_PatternWeight_COUNT_AVGRI_LENGHT[2] = lengthRatio;
+				
+				for(double k=0.0 ; k<=1.0;k=k+0.1){
+					Thresholds.Weight_Of_Scenario_Similarity_EQUALITY_PATTERNSCORE[0] = Math.round((k)*100d) / 100d;
+					Thresholds.Weight_Of_Scenario_Similarity_EQUALITY_PATTERNSCORE[1] = Math.round((1.0-k)*100d) / 100d;
+					
+					ArrayList<Result> resList = new ArrayList<Result>();
+					
+					for(String prj : prjList)
+					{
+						System.out.println("Stage:"+(stage+"")+":"+new Date().toString()
+								+":"+Thresholds.Weight_Of_PatternWeight_COUNT_AVGRI_LENGHT[0]
+								+":"+Thresholds.Weight_Of_PatternWeight_COUNT_AVGRI_LENGHT[1]
+								+":"+Thresholds.Weight_Of_PatternWeight_COUNT_AVGRI_LENGHT[2]
+								+":"+Thresholds.Weight_Of_Scenario_Similarity_EQUALITY_PATTERNSCORE[0]
+								+":"+Thresholds.Weight_Of_Scenario_Similarity_EQUALITY_PATTERNSCORE[1]
+										+":"+prj
+								);
+						stage++;
+						ValidatorController v = new ValidatorController();
+						v.setPatternSet(prj);
+						Result r = v.doSentenceValidation(prj,false,false,false);
+						r.setProjectCode(prj);
+						resList.add(r);
+					}
+					
+					int tryNum=0;
+					int extNum=0;
+					int corNum=0;
+					for(Result r : resList)
+					{
+						tryNum = tryNum + r.getTryNum();
+						extNum = extNum + r.getExtracted();
+						corNum = corNum + r.getCorrect();
+					}
+					
+					DecisionEntity de = new DecisionEntity(
+							Thresholds.Weight_Of_PatternWeight_COUNT_AVGRI_LENGHT[0],
+							Thresholds.Weight_Of_PatternWeight_COUNT_AVGRI_LENGHT[1],
+							Thresholds.Weight_Of_PatternWeight_COUNT_AVGRI_LENGHT[2],
+							Thresholds.Weight_Of_Scenario_Similarity_EQUALITY_PATTERNSCORE[0],
+							Thresholds.Weight_Of_Scenario_Similarity_EQUALITY_PATTERNSCORE[1],
+							tryNum,extNum,corNum
+							);
+					System.out.println(de.toString());
+					decList.add(de);
+				}
+					
+				//ValidatorController v = new ValidatorController();
+				//System.out.println(i+","+j+","+(1.0-i-j));
+			}
+		//}
+		
+		for(DecisionEntity de : decList)
+			System.out.println(de.toString());
 	}
 }
