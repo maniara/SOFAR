@@ -18,11 +18,11 @@ public class Thresholds {
 	public static double Graph_Min_RI = 0.05;
 	
 	//Making Patterns
-	public static double[] Weight_Of_PatternWeight_COUNT_AVGRI_LENGHT={0.8,0.2,0.0};
+	public static double[] Weight_Of_PatternWeight_COUNT_AVGRI_LENGHT={0.0,0.0,1.0};
 	
 	//Action Finding
 	public static double EP_supporter = 1.2;
 	public static double Matched_Pattern_Min_Equal_Rate = 0.3;
-	public static double[] Weight_Of_Scenario_Similarity_EQUALITY_PATTERNSCORE={0.6,0.4};
+	public static double[] Weight_Of_Scenario_Similarity_EQUALITY_PATTERNSCORE={0.2,0.8};
 	
 }

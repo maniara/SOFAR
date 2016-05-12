@@ -101,6 +101,8 @@ public class PatternGeneratorController {
 		//filteringByCount();
 		//filteringByWeight();
 		filteringDuplicated();
+		makeLengthFrequencyMap();
+
 		calculateWeight();
 		setRepVerbOfPattern();
 		//printPFSet();
@@ -113,7 +115,51 @@ public class PatternGeneratorController {
 		
 		//makePatternCandidate();
 		//System.out.println(pfSet.size());
+
 		return this.pfSet;
+	}
+	
+	private void makeLengthFrequencyMap()
+	{
+		class LFElement{
+			int count;
+			int occur;
+			
+			void add(int occur)
+			{
+				this.count++;
+				this.occur = this.occur+occur;
+			}
+			
+			public LFElement(int occur)
+			{
+				this.occur = occur;
+				this.count = 1;
+			}
+		}
+		
+		HashMap<Integer, LFElement> map = new HashMap<Integer, LFElement>();
+		
+		for(PatternFragment pf : this.pfSet)
+		{
+			int len = pf.getVerbList().size();
+			
+			if(map.containsKey(len)){
+				map.get(len).add(pf.getConditionalOccrCount());
+			}
+			else{
+				map.put(len, new LFElement(pf.getConditionalOccrCount()));
+			}
+		}
+		
+		PatternLenFreqMap.map = new HashMap<Integer,Double>();
+		for(int len : map.keySet())
+		{
+			LFElement ele = map.get(len);
+			PatternLenFreqMap.map.put(len,(double) ele.occur/(double) ele.count);
+			
+			//System.out.println(len+":"+PatternLenFreqMap.map.get(len));
+		}
 	}
 	
 	private void setRepVerbOfPattern()
@@ -167,7 +213,7 @@ public class PatternGeneratorController {
 			//getWeightByArcTan
 			//getWeightBySigmoidFunction
 		    //getWeightBySoftsign
-			pf.setCountFactor(pf.getWeightBySigmoidFunction(pf.getConditionalOccrCount(),pfSet.getAverageOccurenceOfPattern()));
+			pf.setCountFactor(pf.getWeightBySigmoidFunction(pf.getDistributionInLength(),0.0));
 			pf.setSizeFactor(pf.getWeightBySigmoidFunction(pf.getVerbList().size(),pfSet.getAverageSizeOfPattern()));
 			
 			double totalWeight = 0.0;

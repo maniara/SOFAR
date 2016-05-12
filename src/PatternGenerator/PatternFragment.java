@@ -121,6 +121,11 @@ public class PatternFragment  implements Comparable<PatternFragment>{
 	public void setPrevOccrCount(int prevOccrCount) {
 		this.prevOccrCount = prevOccrCount;
 	}
+	
+	public double getDistributionInLength()
+	{
+		return ((double) this.getConditionalOccrCount()) - PatternLenFreqMap.map.get(this.getVerbList().size());
+	}
 
 	public int getConditionalOccrCount() {
 		return conditionalOccrCount;
@@ -217,9 +222,9 @@ public class PatternFragment  implements Comparable<PatternFragment>{
 		this.averageRI = this.getTotalRI()/(this.getVerbList().size()-1);
 	}
 	
-	public double getWeightBySigmoidFunction(int count, double avgSize)
+	public double getWeightBySigmoidFunction(double count, double avgSize)
 	{
-		int x = count;
+		double x = count;
 		double jisu = (double) -1*(x - avgSize);
 		
 		double exp = (double) Math.exp(jisu);
@@ -229,15 +234,15 @@ public class PatternFragment  implements Comparable<PatternFragment>{
 		return (double) Math.round(sw*1000)/1000;
 	}
 	
-	public double getWeightByArcTan(int count, double avgSize)
+	public double getWeightByArcTan(double count, double avgSize)
 	{
-		int x = count;
+		double x = count;
 		double atan = Math.atan(x - avgSize);
 		double sw = (atan/3) + 0.5;
 		return (double) Math.round(sw*1000)/1000;
 	}
 	
-	public double getWeightBySoftsign(int count, double avgSize)
+	public double getWeightBySoftsign(double count, double avgSize)
 	{
 		double x = count - avgSize;
 		double abx = Math.abs(x);

@@ -62,6 +62,7 @@ public class PatternFragmentSet extends HashSet<PatternFragment>{
 		return (double) (Math.round(avg*1000)) / 1000;
 				
 	}
+
 	
 	public int getLargestSize()
 	{
