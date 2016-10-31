@@ -15,43 +15,56 @@ public class Sentence implements Comparable<Sentence> {
 	private String representVerb;
 	private String prevType;
 	private String nextType;
-	private boolean hasRepresentive; //using in just sequence pattern generation
-	
-	public Sentence(String sentenceType, String representVerb)
-	{
+	private boolean hasRepresentive; // using in just sequence pattern
+										// generation
+	private String isSample;
+
+	public Sentence(String sentenceType, String representVerb) {
 		this.sentenceContents = sentenceType;
 		this.representVerb = representVerb;
 	}
-	
-	public Sentence(String projectID, String usecaseID, String flowID, String sentenceOrder, String sentenceContents, char sentenceType, int sentenceSeq, boolean isRepeatable, boolean isOptional)
-	{
+
+	public Sentence(String projectID, String usecaseID, String flowID, String sentenceOrder, String sentenceContents,
+			char sentenceType, int sentenceSeq, boolean isRepeatable, boolean isOptional, String isSample) {
 		this.flowID = flowID;
 		this.projectID = projectID;
 		this.usecaseID = usecaseID;
 		this.sentenceContents = sentenceContents;
-		this.sentenceOrder =  sentenceOrder;
+		this.sentenceOrder = sentenceOrder;
 		this.sentenceType = sentenceType;
 		this.sentenceSeq = new Integer(sentenceSeq);
 		this.isOptional = isOptional;
 		this.isRepeatable = isRepeatable;
 		this.hasRepresentive = false;
+		this.isSample = isSample;
 	}
-	
-	public Sentence(String sentenceNum, String projectID, String usecaseID, String flowID, String sentenceOrder, String sentenceContents, char sentenceType, int sentenceSeq, boolean isRepeatable, boolean isOptional)
-	{
+
+	public Sentence(String sentenceNum, String projectID, String usecaseID, String flowID, String sentenceOrder,
+			String sentenceContents, char sentenceType, int sentenceSeq, boolean isRepeatable, boolean isOptional, String isSample) {
 		this.sentenceNum = sentenceNum;
 		this.flowID = flowID;
 		this.projectID = projectID;
 		this.usecaseID = usecaseID;
 		this.sentenceContents = sentenceContents;
-		this.sentenceOrder =  sentenceOrder;
+		this.sentenceOrder = sentenceOrder;
 		this.sentenceType = sentenceType;
 		this.sentenceSeq = new Integer(sentenceSeq);
 		this.isOptional = isOptional;
 		this.isRepeatable = isRepeatable;
 		this.hasRepresentive = false;
+		this.isSample = isSample;
 	}
 	
+	
+
+	public String getIsSample() {
+		return isSample;
+	}
+
+	public void setIsSample(String isSample) {
+		this.isSample = isSample;
+	}
+
 	public boolean hasRepresentive() {
 		return hasRepresentive;
 	}
@@ -60,67 +73,55 @@ public class Sentence implements Comparable<Sentence> {
 		this.hasRepresentive = hasRepresentive;
 	}
 
-	public String getVerb()
-	{
+	public String getVerb() {
 		return this.verb;
 	}
-	
-	public void setVerb(String verb)
-	{
+
+	public void setVerb(String verb) {
 		this.verb = verb;
 	}
-	
-	public String getProjectID()
-	{
+
+	public String getProjectID() {
 		return this.projectID;
 	}
-	
-	public String getUseCaseID()
-	{
+
+	public String getUseCaseID() {
 		return this.usecaseID;
 	}
-	
-	public String getFlowID()
-	{
+
+	public String getFlowID() {
 		return this.flowID;
 	}
-	
-	public String getSentenceOrder()
-	{
+
+	public String getSentenceOrder() {
 		return this.sentenceOrder;
 	}
-	
-	public String getSentenceContents()
-	{
+
+	public String getSentenceContents() {
 		return this.sentenceContents;
 	}
-	
-	public char getSentenceType()
-	{
+
+	public char getSentenceType() {
 		return this.sentenceType;
 	}
-	
-	public int getSentenceSeq()
-	{
+
+	public int getSentenceSeq() {
 		return this.sentenceSeq;
 	}
-	
-	public boolean isOptional()
-	{
+
+	public boolean isOptional() {
 		return this.isOptional;
 	}
-	
-	public boolean isRepeatable()
-	{
+
+	public boolean isRepeatable() {
 		return this.isRepeatable;
 	}
-	
-	public void setSentenceOrder(String ord)
-	{
+
+	public void setSentenceOrder(String ord) {
 		this.sentenceOrder = ord;
 	}
-	
-		public String getSentenceNum() {
+
+	public String getSentenceNum() {
 		return sentenceNum;
 	}
 
@@ -129,14 +130,13 @@ public class Sentence implements Comparable<Sentence> {
 	}
 
 	@Override
-	public int compareTo(Sentence s) 
-	{
+	public int compareTo(Sentence s) {
 		return sentenceSeq.compareTo(s.getSentenceSeq());
 
 	}
-	
+
 	public void changeOrder(String from, String to) {
-		String original = this.sentenceOrder; 
+		String original = this.sentenceOrder;
 		String changed = original.replaceFirst(from, to);
 		this.sentenceOrder = changed;
 	}
@@ -169,15 +169,13 @@ public class Sentence implements Comparable<Sentence> {
 	public void setNextType(String nextType) {
 		this.nextType = nextType;
 	}
-	
-	public String getVerbString()
-	{
-		return this.sentenceType+":"+this.getRepresentVerb();
+
+	public String getVerbString() {
+		return this.sentenceType + ":" + this.getRepresentVerb();
 	}
-	
+
 	@Override
-	public String toString()
-	{
+	public String toString() {
 		return getVerbString();
 	}
 

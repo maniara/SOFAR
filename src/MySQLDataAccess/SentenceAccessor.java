@@ -185,7 +185,7 @@ public class SentenceAccessor {
 				SList.add(new Sentence(rs.getString("projectID"), rs.getString("usecaseID"), rs.getString("flowID"),
 						rs.getString("sentenceOrder"), rs.getString("sentenceContents"),
 						rs.getString("sentenceType").toCharArray()[0], rs.getInt("sentenceSeq"),
-						getBoolean(rs.getString("isRepeatable")), getBoolean(rs.getString("isOptional"))));
+						getBoolean(rs.getString("isRepeatable")), getBoolean(rs.getString("isOptional")),rs.getString("isSample")));
 			}
 		} catch (Exception ex) {
 		}
@@ -217,7 +217,7 @@ public class SentenceAccessor {
 						rs.getString("usecaseID"), rs.getString("flowID"), rs.getString("sentenceOrder"),
 						rs.getString("sentenceContents"), rs.getString("sentenceType").toCharArray()[0],
 						rs.getInt("sentenceSeq"), getBoolean(rs.getString("isRepeatable")),
-						getBoolean(rs.getString("isOptional")));
+						getBoolean(rs.getString("isOptional")),rs.getString("isSample"));
 				sen.setVerb(rs.getString("mainVerb"));
 				SList.add(sen);
 			}
@@ -249,7 +249,7 @@ public class SentenceAccessor {
 						new Sentence(rs.getString("sentenceNum"), rs.getString("projectID"), rs.getString("usecaseID"),
 								rs.getString("flowID"), rs.getString("sentenceOrder"), rs.getString("sentenceContents"),
 								rs.getString("sentenceType").toCharArray()[0], rs.getInt("sentenceSeq"),
-								getBoolean(rs.getString("isRepeatable")), getBoolean(rs.getString("isOptional"))));
+								getBoolean(rs.getString("isRepeatable")), getBoolean(rs.getString("isOptional")),rs.getString("isSample")));
 			}
 		} catch (Exception ex) {
 		}
@@ -286,7 +286,7 @@ public class SentenceAccessor {
 				Sentence sen = new Sentence(rs.getString("projectID"), rs.getString("usecaseID"),
 						rs.getString("flowID"), rs.getString("sentenceOrder"), rs.getString("sentenceContents"),
 						rs.getString("sentenceType").toCharArray()[0], rs.getInt("sentenceSeq"),
-						getBoolean(rs.getString("isRepeatable")), getBoolean(rs.getString("isOptional")));
+						getBoolean(rs.getString("isRepeatable")), getBoolean(rs.getString("isOptional")),rs.getString("isSample"));
 				sen.setSentenceNum(rs.getString("sentenceNum"));
 				if (rs.getString("mainVerb") != null)
 					sen.setVerb(rs.getString("mainVerb"));
@@ -347,7 +347,7 @@ public class SentenceAccessor {
 				Sentence sen = new Sentence(rs.getString("projectID"), rs.getString("usecaseID"),
 						rs.getString("flowID"), rs.getString("sentenceOrder"), rs.getString("sentenceContents"),
 						rs.getString("sentenceType").toCharArray()[0], rs.getInt("sentenceSeq"),
-						getBoolean(rs.getString("isRepeatable")), getBoolean(rs.getString("isOptional")));
+						getBoolean(rs.getString("isRepeatable")), getBoolean(rs.getString("isOptional")),rs.getString("isSample"));
 				sen.setSentenceNum(rs.getString("sentenceNum"));
 				if (rs.getString("mainVerb") != null)
 					sen.setVerb(rs.getString("mainVerb"));
@@ -434,7 +434,7 @@ public class SentenceAccessor {
 						rs.getString("usecaseID"), rs.getString("flowID"), rs.getString("sentenceOrder"),
 						rs.getString("sentenceContents"), rs.getString("sentenceType").toCharArray()[0],
 						rs.getInt("sentenceSeq"), getBoolean(rs.getString("isRepeatable")),
-						getBoolean(rs.getString("isOptional")));
+						getBoolean(rs.getString("isOptional")),rs.getString("isSample"));
 				sen.setVerb(rs.getString("mainVerb"));
 				SList.add(sen);
 			}

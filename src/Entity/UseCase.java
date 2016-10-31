@@ -117,7 +117,7 @@ public class UseCase {
 
 	public void addStartNode() {
 		Sentence fistSen = this.getBasicFlowSentences().get(0);
-		Sentence startSentence = new Sentence(fistSen.getProjectID(), fistSen.getUseCaseID(), fistSen.getFlowID(), "0", "Scnario Start", 's', 0, false, false);
+		Sentence startSentence = new Sentence(fistSen.getProjectID(), fistSen.getUseCaseID(), fistSen.getFlowID(), "0", "Scnario Start", 's', 0, false, false,"n");
 		startSentence.setVerb("ScenarioStart");
 		startSentence.setRepresentVerb("ScenarioStart");
 		for(Flow f:this.flowList)

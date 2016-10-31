@@ -32,6 +32,9 @@ public class ValidatorControllerTest {
 		prjList.add("TMS");
 		prjList.add("STS");
 		prjList.add("OPS");
+		prjList.add("HCS");
+		prjList.add("EMS");
+		prjList.add("ATC");
 		return prjList;
 	}
 	
@@ -50,6 +53,9 @@ public class ValidatorControllerTest {
 		prjList.add("TMS");
 		prjList.add("STS");
 		prjList.add("OPS");
+		prjList.add("HCS");
+		prjList.add("EMS");
+		prjList.add("ATC");
 		return prjList;
 	}
 	
@@ -155,7 +161,7 @@ public class ValidatorControllerTest {
 			MissedResultAccessor mra = new MissedResultAccessor();
 			mra.deleteAllResult();
 		}
-		String prj = "UIS";
+		String prj = "ATC";
 		ArrayList<Result> resultList = new ArrayList<Result>();
 				
 		ValidatorController v = new ValidatorController();
@@ -168,8 +174,8 @@ public class ValidatorControllerTest {
 	@Test
 	public void doOneScenarioValidation()
 	{
-		String prj = "SKP";
-		String uc = "SKP01";
+		String prj = "ATC";
+		String uc = "ATC4";
 		ArrayList<Result> resultList = new ArrayList<Result>();
 				
 		ValidatorController v = new ValidatorController();
@@ -182,8 +188,8 @@ public class ValidatorControllerTest {
 	@Test
 	public void doOneTryValidation()
 	{
-		String prj = "cos";
-		String uc = "cos04";
+		String prj = "HCS";
+		String uc = "HCS1";
 		int omit = 3;
 		ArrayList<Result> resultList = new ArrayList<Result>();
 				
@@ -193,6 +199,71 @@ public class ValidatorControllerTest {
 		resultList.add(r);
 		printResult(resultList);
 	}
+	
+	@Test
+	public void doSampleValidation()
+	{
+		System.out.println(new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new java.util.Date()));
+
+		boolean dbStore = false;
+		boolean printLog = false;
+		if(dbStore){
+			ValidationResultAccessor vra = new ValidationResultAccessor();
+			vra.deleteAllResult();
+			
+			OverExtractedResultAccessor oera = new OverExtractedResultAccessor();
+			oera.deleteAllResult();
+			
+			MissedResultAccessor mra = new MissedResultAccessor();
+			mra.deleteAllResult();
+		}
+
+		ArrayList<String> prjList = this.getAllProjectList();
+		ArrayList<Result> resultList = new ArrayList<Result>();
+				
+		//Thresholds.Weight_Of_Scenario_Similarity_EQUALITY_PATTERNSCORE = {0.2,0.8};
+		for(String prj : prjList){
+			ValidatorController v = new ValidatorController();
+			Result r = v.doSentenceValidation(prj,dbStore,printLog,"y");
+			r.setProjectCode(prj);
+			resultList.add(r);
+		}
+		printResult(resultList);
+		System.out.println(new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new java.util.Date()));
+	}
+	
+	@Test
+	public void doImportanceValidation()
+	{
+		System.out.println(new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new java.util.Date()));
+
+		boolean dbStore = false;
+		boolean printLog = false;
+		if(dbStore){
+			ValidationResultAccessor vra = new ValidationResultAccessor();
+			vra.deleteAllResult();
+			
+			OverExtractedResultAccessor oera = new OverExtractedResultAccessor();
+			oera.deleteAllResult();
+			
+			MissedResultAccessor mra = new MissedResultAccessor();
+			mra.deleteAllResult();
+		}
+
+		ArrayList<String> prjList = this.getAllProjectList();
+		ArrayList<Result> resultList = new ArrayList<Result>();
+				
+		//Thresholds.Weight_Of_Scenario_Similarity_EQUALITY_PATTERNSCORE = {0.2,0.8};
+		for(String prj : prjList){
+			ValidatorController v = new ValidatorController();
+			Result r = v.doSentenceValidation(prj,dbStore,printLog,"2");
+			r.setProjectCode(prj);
+			resultList.add(r);
+		}
+		printResult(resultList);
+		System.out.println(new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new java.util.Date()));
+	}
+	
 
 
 }

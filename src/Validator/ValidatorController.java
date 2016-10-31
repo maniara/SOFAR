@@ -46,7 +46,16 @@ public class ValidatorController {
 		getFlowGraph(targetProjectId);
 		getPatterns(targetProjectId);
 		getTargetProject(targetProjectId);
-		return validate(dbStore,printLog);
+		return validate(dbStore,printLog,"n");
+	}
+	
+	public Result doSentenceValidation(String targetProjectId, boolean dbStore, boolean printLog, String forSample){
+		this.targetProjectId = targetProjectId;
+		getVerbCluster(targetProjectId,true);
+		getFlowGraph(targetProjectId);
+		getPatterns(targetProjectId);
+		getTargetProject(targetProjectId);
+		return validate(dbStore,printLog,forSample);
 	}
 	
 	public Result doSentenceValidation(String targetProjectId, boolean dbStore, boolean printLog, boolean makePattern){
@@ -59,7 +68,7 @@ public class ValidatorController {
 			getTargetProject(targetProjectId);
 		}
 		getPatterns(targetProjectId);
-		return validate(dbStore,printLog);
+		return validate(dbStore,printLog,"n");
 	}
 	
 	public Result doNoExceptValidation(String targetProjectId, boolean dbStore){
@@ -68,7 +77,7 @@ public class ValidatorController {
 		getFlowGraph();
 		getPatterns();
 		getTargetProject(targetProjectId);
-		return validate(dbStore,true);
+		return validate(dbStore,true,"n");
 	}
 	
 	public Result doCompleteScenarioValidation(String targetProjectId)
@@ -87,7 +96,7 @@ public class ValidatorController {
 		getFlowGraph(targetProjectId);
 		getPatterns(targetProjectId);
 		getTargetScenario(targetProjectId,ucId);
-		return validate(dbStore,true);
+		return validate(dbStore,true,"n");
 	}
 	
 	public Result doOneTryValidation(String targetProjectId, String ucId, int omitNum,boolean dbStore){
@@ -147,7 +156,7 @@ public class ValidatorController {
 		return new Result(totalTry,0,correct);
 	}
 
-	private Result validate(boolean dbStore, boolean printLog) {
+	private Result validate(boolean dbStore, boolean printLog, String forSample) {
 		ValidationResultAccessor vra = new ValidationResultAccessor();
 		OverExtractedResultAccessor oera = new OverExtractedResultAccessor();
 		MissedResultAccessor mra = new MissedResultAccessor();
@@ -166,6 +175,15 @@ public class ValidatorController {
 			afc.findRepresentiveVerb(originSentenceList);
 //			
 			for(int i=0;i<originSentenceList.size();i++){
+				if (forSample.equals("y")) {
+					if (forSample.equals("y") && originSentenceList.get(i).getIsSample().equals("n"))
+						continue;
+					if (!forSample.equals("y")) {
+						if (!originSentenceList.get(i).getIsSample().equals(forSample))
+							continue;
+					}
+				}
+
 				String missedResultString = "";
 				int correctInThisTry = 0;
 				String insertString = "";

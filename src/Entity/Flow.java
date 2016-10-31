@@ -134,7 +134,7 @@ public class Flow {
 	public void addStartNode()
 	{
 		Sentence fistSen = this.getSentenceList().get(0);
-		Sentence startSentence = new Sentence(fistSen.getProjectID(), fistSen.getUseCaseID(), fistSen.getFlowID(), "0", "Scnario Start", 's', 0, false, false);
+		Sentence startSentence = new Sentence(fistSen.getProjectID(), fistSen.getUseCaseID(), fistSen.getFlowID(), "0", "Scnario Start", 's', 0, false, false,"n");
 		startSentence.setVerb("ScenarioStart");
 		startSentence.setRepresentVerb("ScenarioStart");
 		

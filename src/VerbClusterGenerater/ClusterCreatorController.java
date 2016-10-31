@@ -435,6 +435,14 @@ public class ClusterCreatorController {
 			
 		}
 		
+		//print frequency
+//		System.out.println(subjectType+"High Freq.");
+//		for(String s:highFreqVerbs)
+//			System.out.print(s+",");
+//		System.out.println(subjectType+"Low Freq.");
+//		for(String s:lowFreqVerbs)
+//			System.out.println(s+",");
+		
 		//High frequency is be a cluster
 		for(String hv : highFreqVerbs)
 		{

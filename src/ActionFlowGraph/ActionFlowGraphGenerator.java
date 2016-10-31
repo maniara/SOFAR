@@ -108,18 +108,20 @@ public class ActionFlowGraphGenerator {
 					edge.addOccurCount();
 				}
 				
-				if(graph.getMaxOccurEdge() < edge.getOccurCount())
+				if(graph.getMaxOccurEdge() < edge.getOccurCount()){
 					graph.setMaxOccurEdge(edge.getOccurCount());
+//					if(edge.getOccurCount()==248)
+//						System.out.println("MAX:"+edge.getFromNode().toString() + "->" + edge.getToNode().toString());
+				}
 				
 				//edge.calculateWeight(maxOccur);
 				//System.out.println(edge.getWeight());
 			}
 		}
-		
 		//this.graph.printGraph();
 		//GraphViewer.draw(this.graph);
 		graph.calculateWeight();
-		
+		//check();
 		ArrayList<AFGEdge> remTarget = getAllowanceRemoveTarget();
 		
 		for(AFGEdge e : remTarget)
@@ -131,6 +133,30 @@ public class ActionFlowGraphGenerator {
 		//printGraph();
 		
 		//System.out.println("=== Graph Generated ===");
+	}
+	
+	private void check()
+	{
+		int fromRequest = 0;
+		int toDisplay = 0;
+		for(AFGEdge e : graph.getEdgeList())
+		{
+			if(e.getFromNode().toString().equals("u:request") && e.getToNode().toString().equals("s:save"))
+				System.out.println(e.getFromNode().toString() + "->" + e.getToNode().toString()+":"+e.getOccurCount());
+			if(e.getFromNode().toString().equals("u:request") && e.getToNode().toString().equals("s:search"))
+				System.out.println(e.getFromNode().toString() + "->" + e.getToNode().toString()+":"+e.getOccurCount());
+			if(e.getFromNode().toString().equals("s:save") && e.getToNode().toString().equals("s:display"))
+				System.out.println(e.getFromNode().toString() + "->" + e.getToNode().toString()+":"+e.getOccurCount());
+			if(e.getFromNode().toString().equals("s:search") && e.getToNode().toString().equals("s:display"))
+				System.out.println(e.getFromNode().toString() + "->" + e.getToNode().toString()+":"+e.getOccurCount());
+			if(e.getFromNode().toString().equals("u:request")){
+				fromRequest=fromRequest+e.getOccurCount();
+			}
+			if(e.getToNode().toString().equals("s:display")){
+				toDisplay=toDisplay+e.getOccurCount();
+			}
+		}
+		System.out.println(fromRequest+":"+toDisplay);
 	}
 	
 	private void printGraph()

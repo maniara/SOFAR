@@ -121,6 +121,7 @@ public class PatternGeneratorController {
 	
 	private void makeLengthFrequencyMap()
 	{
+		int totalOccur = 0;
 		class LFElement{
 			int count;
 			int occur;
@@ -142,6 +143,7 @@ public class PatternGeneratorController {
 		
 		for(PatternFragment pf : this.pfSet)
 		{
+			totalOccur = totalOccur + pf.getConditionalOccrCount();
 			int len = pf.getVerbList().size();
 			
 			if(map.containsKey(len)){
@@ -160,6 +162,8 @@ public class PatternGeneratorController {
 			
 			//System.out.println(len+":"+PatternLenFreqMap.map.get(len));
 		}
+		
+		System.out.println(totalOccur);
 	}
 	
 	private void setRepVerbOfPattern()
@@ -214,7 +218,7 @@ public class PatternGeneratorController {
 			//getWeightBySigmoidFunction
 		    //getWeightBySoftsign
 			pf.setCountFactor(pf.getWeightBySigmoidFunction(pf.getDistributionInLength(),0.0));
-			pf.setSizeFactor(pf.getWeightBySigmoidFunction(pf.getVerbList().size(),pfSet.getAverageSizeOfPattern()));
+			pf.setSizeFactor(pf.getWeightByArcTan(pf.getVerbList().size(),pfSet.getAverageSizeOfPattern()));
 			
 			double totalWeight = 0.0;
 			totalWeight = (Thresholds.Weight_Of_PatternWeight_COUNT_AVGRI_LENGHT[0]*pf.getCountFactor()) 

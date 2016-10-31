@@ -494,7 +494,7 @@ public class UseCaseEditor {
 					order = seqHead+(i+1)+ "";
 				contents = item.getText(3);
 			}
-			list.add(new Sentence(projectID, usecaseID, flowID, order,  contents, type, i, false, false));
+			list.add(new Sentence(projectID, usecaseID, flowID, order,  contents, type, i, false, false,"n"));
 		}
 		//System.out.println(list);
 		return list;
